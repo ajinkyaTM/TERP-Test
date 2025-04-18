@@ -38,10 +38,11 @@ jobs:
       - name: Authenticate with Salesforce (sf CLI)
         run: |
           sf org login jwt \
-            --client-id ${{ secrets.SF_CONSUMER_KEY }} \
+
+            --client-id ${{ secrets.SF_CONSUMERUAT_KEY }} \
             --jwt-key-file server.key \
-            --username ${{ secrets.SF_USERNAME }} \
-            --instance-url ${{ secrets.SF_INSTANCE_URL }} \
+            --username ${{ secrets.SF_USERNAME_UAT }} \
+            --instance-url ${{ secrets.SF_INSTANCE_UAT_URL }} \
             --alias ci-org \
             --set-default
 
