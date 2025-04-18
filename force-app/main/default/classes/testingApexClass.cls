@@ -1,5 +1,5 @@
 public with sharing class testingApexClass {
-    public testingApexClass() {
+    public static void testingApexClass() {
         system.debug('Abcd');
     }
 }
