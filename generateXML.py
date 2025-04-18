@@ -332,7 +332,7 @@ def create_package_xml(added_or_modified_files):
         name.text = metadata_type
 
     version = ET.SubElement(package, "version")
-    version.text = "60.0"
+    version.text = "62.0"
 
     with open("package.xml", "w", encoding="utf-8") as f:
         f.write(prettify_xml(package))
@@ -348,7 +348,7 @@ def create_destructive_changes_xml(deleted_files):
         name.text = metadata_type
 
     version = ET.SubElement(destructive_changes, "version")
-    version.text = "60.0"
+    version.text = "62.0"
 
     with open("destructiveChanges.xml", "w", encoding="utf-8") as f:
         f.write(prettify_xml(destructive_changes))
