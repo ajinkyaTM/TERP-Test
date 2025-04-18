@@ -2,7 +2,7 @@ name: Deploy Salesforce to Main Org
 
 on:
   push:
-    branches: [main, development]
+    branches: [main, UAT]
 
 jobs:
   deploy:
