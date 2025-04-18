@@ -1,7 +1,7 @@
 @isTest
 public with sharing class testingApexClassTest {
     @isTest
-    public testingApexClassTest() {
+    public static void testingApexClassTest() {
         // Start the test context
         Test.startTest();
         
