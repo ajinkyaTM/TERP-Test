@@ -322,10 +322,10 @@
     <members>WorkPlanTemplateEntry</members>
     <members>WorkStep</members>
     <members>WorkStepTemplate</members>
-    <members>fieldSets</members>
+<!--     <members>fieldSets</members>
     <members>listViews</members>
     <members>recordTypes</members>
-    <members>webLinks</members>
+    <members>webLinks</members> -->
     <name>CustomObject</name>
   </types>
   <types>
