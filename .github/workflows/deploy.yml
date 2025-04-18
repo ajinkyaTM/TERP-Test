@@ -33,7 +33,7 @@ jobs:
 
       - name: Decode JWT key
         run: |
-          echo "${{ secrets.SF_JWT_SECRET }}" | base64 --decode > server.key
+          echo "${{ secrets.SF_JWT_SECRET }}" > server.key
 
       - name: Authenticate with Salesforce (sf CLI)
         run: |
