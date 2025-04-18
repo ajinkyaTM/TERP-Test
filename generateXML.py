@@ -34,6 +34,16 @@ FOLDER_TO_METADATA_TYPE = {
     "standardValueSets": "StandardValueSet",
     "customPermissions": "CustomPermission",
     "objects": "CustomObject",
+    "fields": "CustomField",
+    "indexes": "Index",
+    "businessProcesses": "BusinessProcess",
+    "recordTypes": "RecordType",
+    "compactLayouts": "CompactLayout",
+    "webLinks": "WebLink",
+    "validationRules": "ValidationRule",
+    "sharingReasons": "SharingReason",
+    "listViews": "ListView",
+    "fieldSets": "FieldSet",
     "reportTypes": "ReportType",
     "reports": "Report",
     "dashboards": "Dashboard",
@@ -280,12 +290,13 @@ def get_diff_files(base_branch, head_ref):
             if folder_name == "objects" and len(parts) >= 6:
                 object_name = parts[4]
                 sub_folder_or_file = parts[5]
+                sub_metadata_type = FOLDER_TO_METADATA_TYPE.get(sub_folder_or_file)
 
-                if sub_folder_or_file == "fields" and len(parts) >= 7:
+                if sub_metadata_type and len(parts) >= 7:
                     field_file = parts[6]
                     field_name = field_file.split('.')[0]
                     metadata_name = f"{object_name}.{field_name}"
-                    target_dict.setdefault("CustomField", []).append(metadata_name)
+                    target_dict.setdefault(sub_metadata_type, []).append(metadata_name)
                 else:
                     file_name = parts[5]
                     metadata_name = file_name.split('.')[0]
