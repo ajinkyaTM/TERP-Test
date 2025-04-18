@@ -38,6 +38,7 @@ jobs:
       - name: Authenticate with Salesforce (sf CLI)
         run: |
           sf org login jwt \
+
             --client-id ${{ secrets.SF_CONSUMERUAT_KEY }} \
             --jwt-key-file server.key \
             --username ${{ secrets.SF_USERNAME_UAT }} \
