@@ -112,4 +112,3 @@ jobs:
         else
           echo "destructiveChanges.xml not found, skipping destructive validation."
         fi
-  
