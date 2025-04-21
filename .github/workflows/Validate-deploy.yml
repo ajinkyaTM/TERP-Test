@@ -49,9 +49,9 @@ jobs:
         echo "Branch: $BRANCH_NAME"
 
         if [[ "$BRANCH_NAME" == "Dev1" ]]; then
-          echo "SF_USERNAME=${{ secrets.SF_USERNAME }}" >> $GITHUB_ENV
-          echo "SF_CONSUMER_KEY=${{ secrets.SF_CONSUMER_KEY }}" >> $GITHUB_ENV
-          echo "SF_INSTANCE_URL=${{ secrets.SF_INSTANCE_URL }}" >> $GITHUB_ENV
+          echo "SF_USERNAME=${{ secrets.SF_USERNAME_DEV }}" >> $GITHUB_ENV
+          echo "SF_CONSUMER_KEY=${{ secrets.SF_CONSUMER_DEV_KEY }}" >> $GITHUB_ENV
+          echo "SF_INSTANCE_URL=${{ secrets.SF_INSTANCE_UAT_URL }}" >> $GITHUB_ENV
         elif [[ "$BRANCH_NAME" == "QA" ]]; then
           echo "SF_USERNAME=${{ secrets.SF_USERNAME_QA }}" >> $GITHUB_ENV
           echo "SF_CONSUMER_KEY=${{ secrets.SF_CONSUMER_QA_KEY }}" >> $GITHUB_ENV
