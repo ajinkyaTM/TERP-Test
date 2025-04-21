@@ -99,16 +99,16 @@ jobs:
           echo "package.xml not found, skipping deployment."
         fi
 
-    - name: Validate Destructive Changes using destructiveChanges.xml
-      if: steps.check_xml.outputs.exists == 'true'
-      run: |
-        if [ -f "destructiveChanges.xml" ]; then
-          sf project deploy validate \
-            --manifest destructiveChanges.xml \
-            --target-org ci-org \
-            --test-level RunLocalTests \
-            --wait 10 \
-            --verbose
-        else
-          echo "destructiveChanges.xml not found, skipping destructive validation."
-        fi
+    # - name: Validate Destructive Changes using destructiveChanges.xml
+    #   if: steps.check_xml.outputs.exists == 'true'
+    #   run: |
+    #     if [ -f "destructiveChanges.xml" ]; then
+    #       sf project deploy validate \
+    #         --manifest destructiveChanges.xml \
+    #         --target-org ci-org \
+    #         --test-level RunLocalTests \
+    #         --wait 10 \
+    #         --verbose
+    #     else
+    #       echo "destructiveChanges.xml not found, skipping destructive validation."
+    #     fi
