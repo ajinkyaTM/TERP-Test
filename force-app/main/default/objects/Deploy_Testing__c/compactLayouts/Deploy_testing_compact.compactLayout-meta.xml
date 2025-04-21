@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Deploy_testing_compact</fullName>
+    <fields>Deploy_First__c</fields>
+    <fields>Deploy_Second__c</fields>
+    <fields>Name</fields>
+    <label>Deploy testing compact</label>
+</CompactLayout>
