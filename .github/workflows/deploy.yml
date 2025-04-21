@@ -2,57 +2,83 @@ name: Deploy Salesforce to Main Org
 
 on:
   push:
-    branches: [main, development]
+    branches: [main, UAT]
 
 jobs:
-  generate-xml:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-            fetch-depth: 0  # Fetch the full history
+          fetch-depth: 0
 
       - name: Set up Salesforce CLI
         run: npm install --global @salesforce/cli
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.13.2
 
       - name: Fetch base and head branches/commits
         run: |
             git fetch origin ${{ github.event.before }}:${{ github.event.before }}
             git fetch origin ${{ github.sha }}:${{ github.sha }}
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-            python-version: 3.13.2
-
       - name: Run generateXML.py
         run: |
-            python generateXML.py --base_commit ${{ github.event.before }} --head_commit ${{ github.sha }}
+          python generateXML.py --base_commit ${{ github.event.before }} --head_commit ${{ github.sha }}
+
+      - name: Set Org Credentials Based on Branch
+        run: |
+          BRANCH="${GITHUB_REF##*/}"
+          echo "Branch: $BRANCH"
+
+          if [[ "$BRANCH" == "main" ]]; then
+            echo "SF_USERNAME=${{ secrets.SF_USERNAME_MAIN }}" >> $GITHUB_ENV
+            echo "SF_CONSUMER_KEY=${{ secrets.SF_CONSUMER_MAIN_KEY }}" >> $GITHUB_ENV
+            echo "SF_INSTANCE_URL=${{ secrets.SF_INSTANCE_UAT_URL }}" >> $GITHUB_ENV
+          elif [[ "$BRANCH" == "UAT" ]]; then
+            echo "SF_USERNAME=${{ secrets.SF_USERNAME_UAT }}" >> $GITHUB_ENV
+            echo "SF_CONSUMER_KEY=${{ secrets.SF_CONSUMERUAT_KEY }}" >> $GITHUB_ENV
+            echo "SF_INSTANCE_URL=${{ secrets.SF_INSTANCE_UAT_URL }}" >> $GITHUB_ENV
+          else
+            echo "Unsupported branch: $BRANCH"
+            exit 1
+          fi
 
       - name: Decode JWT key
         run: |
-          echo "${{ secrets.SF_JWT_SECRET }}" | base64 --decode > server.key
+          echo "${{ secrets.SF_JWT_SECRET }}" > server.key
 
-      - name: Authenticate with Salesforce
+      - name: Authenticate with Salesforce (sf CLI)
         run: |
-          sfdx force:auth:jwt:grant --client-id ${{ secrets.SF_CONSUMER_KEY }} --jwt-key-file server.key --username ${{ secrets.SF_USERNAME }} --instance-url ${{ secrets.SF_INSTANCE_URL }}
-    
-      - name: Convert to metadata format
-        run: |
-          sfdx force:source:convert -r force-app -d mdapi_output
+          sf org login jwt \
+            --client-id "$SF_CONSUMER_KEY" \
+            --jwt-key-file server.key \
+            --username "$SF_USERNAME" \
+            --instance-url "$SF_INSTANCE_URL" \
+            --alias ci-org \
+            --set-default
 
-      - name: Deploy metadata
+      - name: Deploy Metadata to Salesforce
         run: |
-          sfdx force:mdapi:deploy -d mdapi_output -u ${{ secrets.SF_USERNAME }} \
-            -w 10 -l RunLocalTests
+          sf deploy metadata \
+            --manifest package.xml \
+            --target-org ci-org \
+            --test-level RunLocalTests \
+            --wait 30 \
+            --verbose
 
-      - name: Deploy destructive changes (if any)
+      - name: Deploy Destructive Changes (if present)
         if: ${{ hashFiles('destructiveChanges.xml') != '' }}
         run: |
-          mkdir -p destructive_tmp
-          cp destructiveChanges.xml destructive_tmp/
-          cp package.xml destructive_tmp/
-          sfdx force:mdapi:deploy -d destructive_tmp -u DevHub \
-            -w 10
+          sf deploy metadata \
+            --manifest package.xml \
+            --destructive-changes destructiveChanges.xml \
+            --target-org ci-org \
+            --test-level RunLocalTests \
+            --wait 30 \
+            --verbose
