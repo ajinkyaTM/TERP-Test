@@ -33,6 +33,16 @@ jobs:
           --base_branch ${{ github.event.pull_request.base.ref }} \
           --compare_branch ${{ github.event.pull_request.head.ref }}
 
+    - name: Check if XML files exist
+      id: check_xml
+      run: |
+        exists=false
+        if [ -f "package.xml" ] || [ -f "destructiveChanges.xml" ]; then
+          exists=true
+        fi
+        echo "exists=$exists" >> $GITHUB_OUTPUT
+        echo "XML files exist: $exists"
+
     - name: Set Org Credentials Based on Branch
       run: |
         BRANCH_NAME="${{ github.head_ref }}"
@@ -60,23 +70,46 @@ jobs:
         fi
 
     - name: Decode JWT key
-      run: echo "${{ secrets.SF_JWT_SECRET }}" > server.key
+      if: steps.check_xml.outputs.exists == 'true'
+      run: |
+        echo "${{ secrets.SF_JWT_SECRET }}" > server.key
 
     - name: Authenticate with Salesforce (sf CLI)
+      if: steps.check_xml.outputs.exists == 'true'
       run: |
         sf org login jwt \
-          --client-id $SF_CONSUMER_KEY \
+          --client-id ${{ secrets.SF_CONSUMER_KEY }} \
           --jwt-key-file server.key \
-          --username $SF_USERNAME \
-          --instance-url $SF_INSTANCE_URL \
+          --username ${{ secrets.SF_USERNAME }} \
+          --instance-url ${{ secrets.SF_INSTANCE_URL }} \
           --alias ci-org \
           --set-default
 
     - name: Validate Deployment using package.xml
+      if: steps.check_xml.outputs.exists == 'true'
       run: |
-        sf project deploy validate \
-          --manifest package.xml \
-          --target-org ci-org \
-          --test-level RunLocalTests \
-          --wait 10 \
-          --verbose
+        if [ -f "package.xml" ]; then
+          sf project deploy validate \
+            --manifest package.xml \
+            --target-org ci-org \
+            --test-level RunLocalTests \
+            --wait 10 \
+            --verbose
+        else
+          echo "package.xml not found, skipping deployment."
+        fi
+
+    - name: Validate Destructive Changes using destructiveChanges.xml
+      if: steps.check_xml.outputs.exists == 'true'
+      run: |
+        if [ -f "destructiveChanges.xml" ]; then
+          sf project deploy validate \
+            --manifest destructiveChanges.xml \
+            --target-org ci-org \
+            --test-level RunLocalTests \
+            --wait 10 \
+            --verbose
+        else
+          echo "destructiveChanges.xml not found, skipping destructive validation."
+        fi
+  
