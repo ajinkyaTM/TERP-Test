@@ -34,6 +34,16 @@ FOLDER_TO_METADATA_TYPE = {
     "standardValueSets": "StandardValueSet",
     "customPermissions": "CustomPermission",
     "objects": "CustomObject",
+    "fields": "CustomField",
+    "indexes": "Index",
+    "businessProcesses": "BusinessProcess",
+    "recordTypes": "RecordType",
+    "compactLayouts": "CompactLayout",
+    "webLinks": "WebLink",
+    "validationRules": "ValidationRule",
+    "sharingReasons": "SharingReason",
+    "listViews": "ListView",
+    "fieldSets": "FieldSet",
     "reportTypes": "ReportType",
     "reports": "Report",
     "dashboards": "Dashboard",
@@ -280,12 +290,13 @@ def get_diff_files(base_branch, head_ref):
             if folder_name == "objects" and len(parts) >= 6:
                 object_name = parts[4]
                 sub_folder_or_file = parts[5]
+                sub_metadata_type = FOLDER_TO_METADATA_TYPE.get(sub_folder_or_file)
 
-                if sub_folder_or_file == "fields" and len(parts) >= 7:
+                if sub_metadata_type and len(parts) >= 7:
                     field_file = parts[6]
                     field_name = field_file.split('.')[0]
                     metadata_name = f"{object_name}.{field_name}"
-                    target_dict.setdefault("CustomField", []).append(metadata_name)
+                    target_dict.setdefault(sub_metadata_type, []).append(metadata_name)
                 else:
                     file_name = parts[5]
                     metadata_name = file_name.split('.')[0]
@@ -332,7 +343,7 @@ def create_package_xml(added_or_modified_files):
         name.text = metadata_type
 
     version = ET.SubElement(package, "version")
-    version.text = "62.0"
+    version.text = "60.0"
 
     with open("package.xml", "w", encoding="utf-8") as f:
         f.write(prettify_xml(package))
@@ -348,7 +359,7 @@ def create_destructive_changes_xml(deleted_files):
         name.text = metadata_type
 
     version = ET.SubElement(destructive_changes, "version")
-    version.text = "62.0"
+    version.text = "60.0"
 
     with open("destructiveChanges.xml", "w", encoding="utf-8") as f:
         f.write(prettify_xml(destructive_changes))
@@ -361,9 +372,12 @@ def generate_metadata_files(base_branch, head_ref):
         print(f"No changes found between {base_branch} and {head_ref}.")
         return
 
-    create_package_xml(added_or_modified_files)
-    create_destructive_changes_xml(deleted_files)
-    print("Generated package.xml and destructiveChanges.xml successfully.")
+    if added_or_modified_files:
+        create_package_xml(added_or_modified_files)
+        print("Generated package.xml successfully.")
+    if deleted_files:
+        create_destructive_changes_xml(deleted_files)
+        print("Generated destructiveChanges.xml successfully.")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate package.xml and destructiveChanges.xml by comparing branches.")
