@@ -21,22 +21,25 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: 3.13.2
-    - name: Fetch base and head branches/commits
-      run: |
-        git fetch origin ${{ github.event.pull_request.base.ref }}:${{ github.event.pull_request.base.ref }}
-        git fetch origin ${{ github.event.pull_request.head.ref }}:${{ github.event.pull_request.head.ref }}
-        
+
     - name: Run generateXML.py
+      id: generate-xml
       run: |
         python generateXML.py \
           --base_branch ${{ github.event.pull_request.base.ref }} \
           --compare_branch ${{ github.event.pull_request.head.ref }}
+        if [ ! -f "package.xml" ]; then
+          echo "Package XML not found."
+          exit 1
+        fi
 
     - name: Decode JWT key
+      if: ${{ steps.generate-xml.outcome == 'success' }}
       run: |
         echo "${{ secrets.SF_JWT_SECRET }}" > server.key
 
     - name: Authenticate with Salesforce (sf CLI)
+      if: ${{ steps.generate-xml.outcome == 'success' }}
       run: |
         sf org login jwt \
           --client-id ${{ secrets.SF_CONSUMER_KEY }} \
@@ -47,6 +50,7 @@ jobs:
           --set-default
 
     - name: Validate Deployment using package.xml
+      if: ${{ steps.generate-xml.outcome == 'success' }}
       run: |
         sf project deploy validate \
           --manifest package.xml \
@@ -54,3 +58,4 @@ jobs:
           --test-level RunLocalTests \
           --wait 10 \
           --verbose
+
