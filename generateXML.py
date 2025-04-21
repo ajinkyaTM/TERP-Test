@@ -372,9 +372,12 @@ def generate_metadata_files(base_branch, head_ref):
         print(f"No changes found between {base_branch} and {head_ref}.")
         return
 
-    create_package_xml(added_or_modified_files)
-    create_destructive_changes_xml(deleted_files)
-    print("Generated package.xml and destructiveChanges.xml successfully.")
+    if added_or_modified_files:
+        create_package_xml(added_or_modified_files)
+        print("Generated package.xml successfully.")
+    if deleted_files:
+        create_destructive_changes_xml(deleted_files)
+        print("Generated destructiveChanges.xml successfully.")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate package.xml and destructiveChanges.xml by comparing branches.")
