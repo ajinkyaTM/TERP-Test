@@ -36,6 +36,7 @@ jobs:
           exists=true
         fi
         echo "exists=$exists" >> $GITHUB_OUTPUT
+        echo "XML files exist: $exists"
 
     - name: Set Org Credentials Based on Branch
       run: |
