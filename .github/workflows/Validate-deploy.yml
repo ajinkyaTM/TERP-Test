@@ -21,28 +21,50 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: 3.13.2
+
     - name: Fetch base and head branches/commits
       run: |
         git fetch origin ${{ github.event.pull_request.base.ref }}:${{ github.event.pull_request.base.ref }}
         git fetch origin ${{ github.event.pull_request.head.ref }}:${{ github.event.pull_request.head.ref }}
-        
+
     - name: Run generateXML.py
       run: |
         python generateXML.py \
           --base_branch ${{ github.event.pull_request.base.ref }} \
           --compare_branch ${{ github.event.pull_request.head.ref }}
 
-    - name: Decode JWT key
+    - name: Set Org Credentials Based on Branch
       run: |
-        echo "${{ secrets.SF_JWT_SECRET }}" > server.key
+        BRANCH_NAME="${{ github.head_ref }}"
+        echo "Branch: $BRANCH_NAME"
+
+        if [[ "$BRANCH_NAME" == "Dev1" ]]; then
+          echo "SF_USERNAME=${{ secrets.SF_USERNAME }}" >> $GITHUB_ENV
+          echo "SF_CONSUMER_KEY=${{ secrets.SF_CONSUMER_KEY }}" >> $GITHUB_ENV
+          echo "SF_INSTANCE_URL=${{ secrets.SF_INSTANCE_URL }}" >> $GITHUB_ENV
+        elif [[ "$BRANCH_NAME" == "UAT" ]]; then
+          echo "SF_USERNAME=${{ secrets.SF_USERNAME_UAT }}" >> $GITHUB_ENV
+          echo "SF_CONSUMER_KEY=${{ secrets.SF_CONSUMERUAT_KEY }}" >> $GITHUB_ENV
+          echo "SF_INSTANCE_URL=${{ secrets.SF_INSTANCE_UAT_URL }}" >> $GITHUB_ENV
+        elif [[ "$BRANCH_NAME" == "main" ]]; then
+          echo "SF_USERNAME=${{ secrets.SF_USERNAME_MAIN }}" >> $GITHUB_ENV
+          echo "SF_CONSUMER_KEY=${{ secrets.SF_CONSUMER_MAIN_KEY }}" >> $GITHUB_ENV
+          echo "SF_INSTANCE_URL=${{ secrets.SF_INSTANCE_UAT_URL }}" >> $GITHUB_ENV
+        else
+          echo "Unsupported branch: $BRANCH_NAME"
+          exit 1
+        fi
+
+    - name: Decode JWT key
+      run: echo "${{ secrets.SF_JWT_SECRET }}" > server.key
 
     - name: Authenticate with Salesforce (sf CLI)
       run: |
         sf org login jwt \
-          --client-id ${{ secrets.SF_CONSUMER_KEY }} \
+          --client-id $SF_CONSUMER_KEY \
           --jwt-key-file server.key \
-          --username ${{ secrets.SF_USERNAME }} \
-          --instance-url ${{ secrets.SF_INSTANCE_URL }} \
+          --username $SF_USERNAME \
+          --instance-url $SF_INSTANCE_URL \
           --alias ci-org \
           --set-default
 
