@@ -31,6 +31,24 @@ jobs:
         run: |
           python generateXML.py --base_commit ${{ github.event.before }} --head_commit ${{ github.sha }}
 
+      - name: Set Org Credentials Based on Branch
+        run: |
+          BRANCH="${GITHUB_REF##*/}"
+          echo "Branch: $BRANCH"
+
+          if [[ "$BRANCH" == "main" ]]; then
+            echo "SF_USERNAME=${{ secrets.SF_USERNAME_MAIN }}" >> $GITHUB_ENV
+            echo "SF_CONSUMER_KEY=${{ secrets.SF_CONSUMER_MAIN_KEY }}" >> $GITHUB_ENV
+            echo "SF_INSTANCE_URL=${{ secrets.SF_INSTANCE_UAT_URL }}" >> $GITHUB_ENV
+          elif [[ "$BRANCH" == "UAT" ]]; then
+            echo "SF_USERNAME=${{ secrets.SF_USERNAME_UAT }}" >> $GITHUB_ENV
+            echo "SF_CONSUMER_KEY=${{ secrets.SF_CONSUMERUAT_KEY }}" >> $GITHUB_ENV
+            echo "SF_INSTANCE_URL=${{ secrets.SF_INSTANCE_UAT_URL }}" >> $GITHUB_ENV
+          else
+            echo "Unsupported branch: $BRANCH"
+            exit 1
+          fi
+
       - name: Decode JWT key
         run: |
           echo "${{ secrets.SF_JWT_SECRET }}" > server.key
@@ -38,10 +56,10 @@ jobs:
       - name: Authenticate with Salesforce (sf CLI)
         run: |
           sf org login jwt \
-            --client-id ${{ secrets.SF_CONSUMERUAT_KEY }} \
+            --client-id "$SF_CONSUMER_KEY" \
             --jwt-key-file server.key \
-            --username ${{ secrets.SF_USERNAME_UAT }} \
-            --instance-url ${{ secrets.SF_INSTANCE_UAT_URL }} \
+            --username "$SF_USERNAME" \
+            --instance-url "$SF_INSTANCE_URL" \
             --alias ci-org \
             --set-default
 
