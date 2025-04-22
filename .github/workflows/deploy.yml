@@ -94,22 +94,30 @@ jobs:
       - name: Deploy Metadata and/or Destructive Changes to Salesforce
         if: ${{ env.packageChanges == 'true' || env.destructiveChanges == 'true' }}
         run: |
-          if [[ "${{ env.packageChanges }}" == "true" ]]; then
-            echo "Deploying metadata using sf CLI..."
+          echo " Starting deployment..."
+      
+          if [[ "${{ env.packageChanges }}" == "true" && "${{ env.destructiveChanges }}" == "true" ]]; then
+            echo " Deploying metadata and destructive changes (pre)..."
+            sf project deploy start \
+              --manifest package.xml \
+              --pre-destructive-changes destructiveChanges.xml \
+              --target-org ci-org \
+              --test-level RunLocalTests \
+              --wait 30 \
+              --verbose
+      
+          elif [[ "${{ env.packageChanges }}" == "true" ]]; then
+            echo " Deploying metadata only..."
             sf project deploy start \
               --manifest package.xml \
               --target-org ci-org \
               --test-level RunLocalTests \
               --wait 30 \
               --verbose
-          fi
-
-          if [[ "${{ env.destructiveChanges }}" == "true" ]]; then
-            echo "Deploying destructive changes using sf CLI..."
-            sf project deploy start \
-              --pre-destructive-changes destructiveChanges.xml \
-              --target-org ci-org \
-              --test-level RunLocalTests \
-              --wait 30 \
-              --verbose
+      
+          elif [[ "${{ env.packageChanges }}" == "false" && "${{ env.destructiveChanges }}" == "true" ]]; then
+            echo " Deleting destructive changes..."
+            sf project delete source \
+              --metadata $(cat destructiveChanges.xml | grep -oP '(?<=<fullName>)(.*?)(?=</fullName>)' | tr '\n' ' ' | sed 's/ $//') \
+              --target-org ci-org
           fi
