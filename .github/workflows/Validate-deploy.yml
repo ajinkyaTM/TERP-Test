@@ -32,20 +32,29 @@ jobs:
         rm -f package.xml destructiveChanges.xml
       
     - name: Run generateXML.py
+      id: check_xml
       run: |
         python generateXML.py \
           --base_branch ${{ github.event.pull_request.base.ref }} \
           --compare_branch ${{ github.event.pull_request.head.ref }}
-
-    - name: Check if XML files exist
-      id: check_xml
-      run: |
-        exists=false
-        if [ -f "package.xml" ] || [ -f "destructiveChanges.xml" ]; then
-          exists=true
+        echo "Successfully run generateXML.py"
+        if [ ! -f "package.xml" ] && [ ! -f "destructiveChanges.xml" ]; then
+          echo "exists=false" >> $GITHUB_OUTPUT
+        else
+          echo "exists=true" >> $GITHUB_OUTPUT
         fi
-        echo "exists=$exists" >> $GITHUB_OUTPUT
-        echo "XML files exist: $exists"
+        if [ ! -f "package.xml" ]; then
+          echo "packageChanges=false" >> $GITHUB_ENV
+          echo "Package XML not found."
+        else
+          echo "packageChanges=true" >> $GITHUB_ENV
+        fi
+        if [ -f "destructiveChanges.xml" ]; then
+          echo "destructiveChanges=true" >> $GITHUB_ENV
+        else
+          echo "destructiveChanges=false" >> $GITHUB_ENV
+        fi
+      
 
     - name: Set Org Credentials Based on Branch
       run: |
@@ -53,17 +62,21 @@ jobs:
         echo "Branch: $BRANCH_NAME"
 
         if [[ "$BRANCH_NAME" == "Dev1" ]]; then
-          echo "SF_USERNAME=${{ secrets.SF_USERNAME_DEV }}" >> $GITHUB_ENV
-          echo "SF_CONSUMER_KEY=${{ secrets.SF_CONSUMER_DEV_KEY }}" >> $GITHUB_ENV
+          echo "SF_USERNAME=${{ secrets.SF_USERNAME }}" >> $GITHUB_ENV
+          echo "SF_CONSUMER_KEY=${{ secrets.SF_CONSUMER_KEY }}" >> $GITHUB_ENV
+          echo "SF_INSTANCE_URL=${{ secrets.SF_INSTANCE_URL }}" >> $GITHUB_ENV
         elif [[ "$BRANCH_NAME" == "QA" ]]; then
           echo "SF_USERNAME=${{ secrets.SF_USERNAME_QA }}" >> $GITHUB_ENV
           echo "SF_CONSUMER_KEY=${{ secrets.SF_CONSUMER_QA_KEY }}" >> $GITHUB_ENV
+          echo "SF_INSTANCE_URL=${{ secrets.SF_INSTANCE_UAT_URL }}" >> $GITHUB_ENV
         elif [[ "$BRANCH_NAME" == "UAT" ]]; then
           echo "SF_USERNAME=${{ secrets.SF_USERNAME_UAT }}" >> $GITHUB_ENV
           echo "SF_CONSUMER_KEY=${{ secrets.SF_CONSUMERUAT_KEY }}" >> $GITHUB_ENV
+          echo "SF_INSTANCE_URL=${{ secrets.SF_INSTANCE_UAT_URL }}" >> $GITHUB_ENV
         elif [[ "$BRANCH_NAME" == "main" ]]; then
           echo "SF_USERNAME=${{ secrets.SF_USERNAME_MAIN }}" >> $GITHUB_ENV
           echo "SF_CONSUMER_KEY=${{ secrets.SF_CONSUMER_MAIN_KEY }}" >> $GITHUB_ENV
+          echo "SF_INSTANCE_URL=${{ secrets.SF_INSTANCE_UAT_URL }}" >> $GITHUB_ENV
         else
           echo "Unsupported branch: $BRANCH_NAME"
           exit 1
@@ -84,31 +97,56 @@ jobs:
           --alias ci-org \
           --set-default
 
-    - name: Validate Deployment and Destructive Changes
-      if: steps.check_xml.outputs.exists == 'true'
+    - name: Validate Deployment and/or Destructive Changes
+      if: ${{ steps.check_xml.outputs.exists == 'true' }}
       run: |
+        echo "Starting validation process..."
+    
+        if [[ "${{ env.packageChanges }}" == "true" && "${{ env.destructiveChanges }}" == "true" ]]; then
+          echo "Validating both package.xml and destructiveChanges.xml..."
+    
+          if [ -f "package.xml" ] && [ -f "destructiveChanges.xml" ]; then
+            sf project deploy validate \
+              --manifest package.xml \
+              --post-destructive-changes destructiveChanges.xml \
+              --target-org ci-org \
+              --test-level RunLocalTests \
+              --wait 10 \
+              --verbose
+          else
+            echo "Required files not found. Skipping..."
+          fi
+    
+        elif [[ "${{ env.packageChanges }}" == "true" && "${{ env.destructiveChanges }}" == "false" ]]; then
+          echo "Validating package.xml only..."
           if [ -f "package.xml" ]; then
-           echo "Validating deployment using package.xml..."
-           sf project deploy validate \
+            sf project deploy validate \
               --manifest package.xml \
               --target-org ci-org \
               --test-level RunLocalTests \
               --wait 10 \
-              --verbose \
-              --ignore-conflicts
+              --verbose
           else
-           echo "package.xml not found, skipping metadata validation."
+            echo "package.xml not found, skipping metadata validation."
           fi
-      
+    
+        elif [[ "${{ env.packageChanges }}" == "false" && "${{ env.destructiveChanges }}" == "true" ]]; then
+          echo "Validating destructiveChanges.xml only..."
           if [ -f "destructiveChanges.xml" ]; then
-           echo "Validating destructive changes using destructiveChanges.xml..."
-           sf deploy metadata validate \
-              --destructive-changes destructiveChanges.xml \
+            # Use an empty package.xml just to accompany the destructive changes
+            echo '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata"><types><members>*</members><name>ApexClass</name></types><version>58.0</version></Package>' > dummy-package.xml
+            sf project deploy validate \
+              --manifest dummy-package.xml \
+              --post-destructive-changes destructiveChanges.xml \
               --target-org ci-org \
               --test-level RunLocalTests \
               --wait 10 \
-              --verbose \
-              --ignore-conflicts
+              --verbose
+            rm dummy-package.xml
           else
-           echo "destructiveChanges.xml not found, skipping destructive validation."
+            echo "destructiveChanges.xml not found, skipping destructive validation."
           fi
+    
+        else
+          echo "No package or destructive changes to validate. Skipping..."
+        fi
