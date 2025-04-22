@@ -117,7 +117,16 @@ jobs:
       
           elif [[ "${{ env.packageChanges }}" == "false" && "${{ env.destructiveChanges }}" == "true" ]]; then
             echo " Deleting destructive changes..."
-            sf project delete source \
-              --metadata $(cat destructiveChanges.xml | grep -oP '(?<=<fullName>)(.*?)(?=</fullName>)' | tr '\n' ' ' | sed 's/ $//') \
-              --target-org ci-org
+            echo '<?xml version="1.0" encoding="UTF-8"?>
+                    <Package xmlns="http://soap.sforce.com/2006/04/metadata">
+                      <version>58.0</version>
+                    </Package>' > package.xml
+
+            sf project deploy start \
+              --manifest package.xml \
+              --pre-destructive-changes destructiveChanges.xml \
+              --target-org ci-org \
+              --test-level RunLocalTests \
+              --wait 30 \
+              --verbose
           fi
