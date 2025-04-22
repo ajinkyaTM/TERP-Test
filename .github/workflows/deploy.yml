@@ -94,37 +94,22 @@ jobs:
       - name: Deploy Metadata and/or Destructive Changes to Salesforce
         if: ${{ env.packageChanges == 'true' || env.destructiveChanges == 'true' }}
         run: |
-          if [[ "${{ env.packageChanges }}" == "true" && "${{ env.destructiveChanges }}" == "true" ]]; then
-            echo "Deploying metadata and destructive changes..."
-            sf deploy metadata \
-              --manifest package.xml \
-              --destructive-changes destructiveChanges.xml \
-              --target-org ci-org \
-              --test-level RunLocalTests \
-              --wait 30 \
-              --verbose \
-              --ignore-conflicts
-
-          elif [[ "${{ env.packageChanges }}" == "true" && "${{ env.destructiveChanges }}" == "false" ]]; then
-            echo "Deploying metadata only..."
-            sf deploy metadata \
+          if [[ "${{ env.packageChanges }}" == "true" ]]; then
+            echo "Deploying metadata using sf CLI..."
+            sf project deploy start \
               --manifest package.xml \
               --target-org ci-org \
               --test-level RunLocalTests \
               --wait 30 \
-              --verbose \
-              --ignore-conflicts
+              --verbose
+          fi
 
-          elif [[ "${{ env.packageChanges }}" == "false" && "${{ env.destructiveChanges }}" == "true" ]]; then
-            echo "Deploying destructive changes only..."
-            sf deploy metadata \
-              --destructive-changes destructiveChanges.xml \
+          if [[ "${{ env.destructiveChanges }}" == "true" ]]; then
+            echo "Deploying destructive changes using sf CLI..."
+            sf project deploy delete \
+              --manifest destructiveChanges.xml \
               --target-org ci-org \
               --test-level RunLocalTests \
               --wait 30 \
-              --verbose \
-              --ignore-conflicts
-
-          else
-            echo "No changes to deploy."
+              --verbose
           fi
