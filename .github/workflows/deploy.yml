@@ -35,14 +35,17 @@ jobs:
         id: generate-xml
         run: |
           python generateXML.py --base_commit ${{ github.event.before }} --head_commit ${{ github.sha }}
+          
           if [ ! -f "package.xml" ]; then
             echo "Package XML not found."
             exit 1
           fi
+          
           if [ -f "destructiveChanges.xml" ]; then
             echo "destructiveChanges=true" >> $GITHUB_ENV
           else
             echo "destructiveChanges=false" >> $GITHUB_ENV
+          fi
 
       - name: Set Org Credentials Based on Branch
         run: |
