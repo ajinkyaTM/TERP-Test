@@ -27,6 +27,10 @@ jobs:
         git fetch origin ${{ github.event.pull_request.base.ref }}:${{ github.event.pull_request.base.ref }}
         git fetch origin ${{ github.event.pull_request.head.ref }}:${{ github.event.pull_request.head.ref }}
 
+    - name: Clean up old XML files
+      run: |
+        rm -f package.xml destructiveChanges.xml
+      
     - name: Run generateXML.py
       run: |
         python generateXML.py \
@@ -99,16 +103,16 @@ jobs:
           echo "package.xml not found, skipping deployment."
         fi
 
-    # - name: Validate Destructive Changes using destructiveChanges.xml
-    #   if: steps.check_xml.outputs.exists == 'true'
-    #   run: |
-    #     if [ -f "destructiveChanges.xml" ]; then
-    #       sf project deploy validate \
-    #         --manifest destructiveChanges.xml \
-    #         --target-org ci-org \
-    #         --test-level RunLocalTests \
-    #         --wait 10 \
-    #         --verbose
-    #     else
-    #       echo "destructiveChanges.xml not found, skipping destructive validation."
-    #     fi
+    - name: Validate Destructive Changes using destructiveChanges.xml
+      if: steps.check_xml.outputs.exists == 'true'
+      run: |
+        if [ -f "destructiveChanges.xml" ]; then
+          sf project deploy validate \
+            --manifest destructiveChanges.xml \
+            --target-org ci-org \
+            --test-level RunLocalTests \
+            --wait 10 \
+            --verbose
+        else
+          echo "destructiveChanges.xml not found, skipping destructive validation."
+        fi
