@@ -106,7 +106,7 @@ jobs:
 
           if [[ "${{ env.destructiveChanges }}" == "true" ]]; then
             echo "Deploying destructive changes using sf CLI..."
-            sf project deploy \
+            sf project deploy start \
               --pre-destructive-changes destructiveChanges.xml \
               --target-org ci-org \
               --test-level RunLocalTests \
