@@ -118,7 +118,7 @@ jobs:
           elif [[ "${{ env.packageChanges }}" == "false" && "${{ env.destructiveChanges }}" == "true" ]]; then
             echo " Deleting destructive changes..."
             sf project deploy start \
-              --metadata ApexClass:MyClass \
+              --manifest package.xml \
               --pre-destructive-changes destructiveChanges.xml \
               --target-org ci-org \
               --test-level RunLocalTests \
