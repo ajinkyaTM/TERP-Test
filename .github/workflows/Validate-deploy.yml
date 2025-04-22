@@ -49,7 +49,7 @@ jobs:
 
     - name: Set Org Credentials Based on Branch
       run: |
-        BRANCH_NAME="${{ github.head_ref }}"
+        BRANCH_NAME="${{ github.base_ref }}"
         echo "Branch: $BRANCH_NAME"
 
         if [[ "$BRANCH_NAME" == "Dev1" ]]; then
