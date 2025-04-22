@@ -36,11 +36,18 @@ jobs:
         run: |
           python generateXML.py --base_commit ${{ github.event.before }} --head_commit ${{ github.sha }}
           
-          if [ ! -f "package.xml" ]; then
-            echo "Package XML not found."
-            exit 1
+          echo "Successfully run generateXML.py"
+          if [ ! -f "package.xml" ] && [ ! -f "destructiveChanges.xml" ]; then
+            echo "exists=false" >> $GITHUB_OUTPUT
+          else
+            echo "exists=true" >> $GITHUB_OUTPUT
           fi
-          
+          if [ ! -f "package.xml" ]; then
+            echo "packageChanges=false" >> $GITHUB_ENV
+            echo "Package XML not found."
+          else
+            echo "packageChanges=true" >> $GITHUB_ENV
+          fi
           if [ -f "destructiveChanges.xml" ]; then
             echo "destructiveChanges=true" >> $GITHUB_ENV
           else
