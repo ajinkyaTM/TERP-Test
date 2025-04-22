@@ -34,14 +34,17 @@ jobs:
       - name: Run generateXML.py
         id: generate-xml
         run: |
+          set -e
           python generateXML.py --base_commit ${{ github.event.before }} --head_commit ${{ github.sha }}
           echo "Successfully run generateXML.py"
+
           if [ -f "package.xml" ]; then
             echo "packageChanges=true" >> $GITHUB_ENV
           else
             echo "packageChanges=false" >> $GITHUB_ENV
             echo "Package XML not found."
           fi
+
           if [ -f "destructiveChanges.xml" ]; then
             echo "destructiveChanges=true" >> $GITHUB_ENV
           else
@@ -82,11 +85,11 @@ jobs:
         if: ${{ env.packageChanges == 'true' || env.destructiveChanges == 'true' }}
         run: |
           sf org login jwt \
-          --client-id $SF_CONSUMER_KEY \
-          --jwt-key-file server.key \
-          --username $SF_USERNAME \
-          --alias ci-org \
-          --set-default
+            --client-id $SF_CONSUMER_KEY \
+            --jwt-key-file server.key \
+            --username $SF_USERNAME \
+            --alias ci-org \
+            --set-default
 
       - name: Deploy Metadata and/or Destructive Changes to Salesforce
         if: ${{ env.packageChanges == 'true' || env.destructiveChanges == 'true' }}
