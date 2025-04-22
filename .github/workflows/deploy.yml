@@ -81,23 +81,40 @@ jobs:
           --alias ci-org \
           --set-default
 
-      - name: Deploy Metadata to Salesforce
+      - name: Deploy Metadata and/or Destructive Changes to Salesforce
         if: ${{ steps.generate-xml.outcome == 'success' }}
         run: |
-          sf deploy metadata \
-            --manifest package.xml \
-            --target-org ci-org \
-            --test-level RunLocalTests \
-            --wait 30 \
-            --verbose
-
-      - name: Deploy Destructive Changes (if present)
-        if: ${{ env.destructiveChanges == 'true' && steps.generate-xml.outcome == 'success' }}
-        run: |
-          sf deploy metadata \
-            --manifest package.xml \
-            --destructive-changes destructiveChanges.xml \
-            --target-org ci-org \
-            --test-level RunLocalTests \
-            --wait 30 \
-            --verbose
+         if [[ "${{ env.packageChanges }}" == "true" && "${{ env.destructiveChanges }}" == "true" ]]; then
+            echo "Deploying metadata and destructive changes..."
+            sf deploy metadata \
+             --manifest package.xml \
+             --destructive-changes destructiveChanges.xml \
+             --target-org ci-org \
+             --test-level RunLocalTests \
+             --wait 30 \
+             --verbose \
+             --ignore-conflicts
+    
+         elif [[ "${{ env.packageChanges }}" == "true" && "${{ env.destructiveChanges }}" == "false" ]]; then
+            echo "Deploying metadata only..."
+            sf deploy metadata \
+             --manifest package.xml \
+             --target-org ci-org \
+             --test-level RunLocalTests \
+             --wait 30 \
+             --verbose \
+             --ignore-conflicts
+    
+         elif [[ "${{ env.packageChanges }}" == "false" && "${{ env.destructiveChanges }}" == "true" ]]; then
+            echo "Deploying destructive changes only..."
+            sf deploy metadata \
+             --destructive-changes destructiveChanges.xml \
+             --target-org ci-org \
+             --test-level RunLocalTests \
+             --wait 30 \
+             --verbose \
+             --ignore-conflicts
+    
+         else
+            echo "No changes to deploy."
+         fi
