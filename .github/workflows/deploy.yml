@@ -2,7 +2,7 @@ name: Deploy Salesforce to Main Org
 
 on:
   push:
-    branches: [main, UAT]
+    branches: [main, UAT, QA]
 
 jobs:
   deploy:
@@ -27,9 +27,22 @@ jobs:
             git fetch origin ${{ github.event.before }}:${{ github.event.before }}
             git fetch origin ${{ github.sha }}:${{ github.sha }}
 
+      - name: Clean up old XML files
+        run: |
+          rm -f package.xml destructiveChanges.xml
+
       - name: Run generateXML.py
+        id: generate-xml
         run: |
           python generateXML.py --base_commit ${{ github.event.before }} --head_commit ${{ github.sha }}
+          if [ ! -f "package.xml" ]; then
+            echo "Package XML not found."
+            exit 1
+          fi
+          if [ -f "destructiveChanges.xml" ]; then
+            echo "destructiveChanges=true" >> $GITHUB_ENV
+          else
+            echo "destructiveChanges=false" >> $GITHUB_ENV
 
       - name: Set Org Credentials Based on Branch
         run: |
@@ -54,20 +67,23 @@ jobs:
           fi
 
       - name: Decode JWT key
+        if: ${{ steps.generate-xml.outcome == 'success' }}
         run: |
           echo "${{ secrets.SF_JWT_SECRET }}" > server.key
 
       - name: Authenticate with Salesforce (sf CLI)
+        if: ${{ steps.generate-xml.outcome == 'success' }}
         run: |
           sf org login jwt \
-            --client-id "$SF_CONSUMER_KEY" \
-            --jwt-key-file server.key \
-            --username "$SF_USERNAME" \
-            --instance-url "$SF_INSTANCE_URL" \
-            --alias ci-org \
-            --set-default
+          --client-id $SF_CONSUMER_KEY \
+          --jwt-key-file server.key \
+          --username $SF_USERNAME \
+          --instance-url $SF_INSTANCE_URL \
+          --alias ci-org \
+          --set-default
 
       - name: Deploy Metadata to Salesforce
+        if: ${{ steps.generate-xml.outcome == 'success' }}
         run: |
           sf deploy metadata \
             --manifest package.xml \
@@ -77,7 +93,7 @@ jobs:
             --verbose
 
       - name: Deploy Destructive Changes (if present)
-        if: ${{ hashFiles('destructiveChanges.xml') != '' }}
+        if: ${{ env.destructiveChanges == 'true' && steps.generate-xml.outcome == 'success' }}
         run: |
           sf deploy metadata \
             --manifest package.xml \
