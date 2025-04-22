@@ -24,8 +24,8 @@ jobs:
 
       - name: Fetch base and head branches/commits
         run: |
-            git fetch origin ${{ github.event.before }}:${{ github.event.before }}
-            git fetch origin ${{ github.sha }}:${{ github.sha }}
+          git fetch origin ${{ github.event.before }}:${{ github.event.before }}
+          git fetch origin ${{ github.sha }}:${{ github.sha }}
 
       - name: Clean up old XML files
         run: |
@@ -35,18 +35,12 @@ jobs:
         id: generate-xml
         run: |
           python generateXML.py --base_commit ${{ github.event.before }} --head_commit ${{ github.sha }}
-          
           echo "Successfully run generateXML.py"
-          if [ ! -f "package.xml" ] && [ ! -f "destructiveChanges.xml" ]; then
-            echo "exists=false" >> $GITHUB_OUTPUT
+          if [ -f "package.xml" ]; then
+            echo "packageChanges=true" >> $GITHUB_ENV
           else
-            echo "exists=true" >> $GITHUB_OUTPUT
-          fi
-          if [ ! -f "package.xml" ]; then
             echo "packageChanges=false" >> $GITHUB_ENV
             echo "Package XML not found."
-          else
-            echo "packageChanges=true" >> $GITHUB_ENV
           fi
           if [ -f "destructiveChanges.xml" ]; then
             echo "destructiveChanges=true" >> $GITHUB_ENV
@@ -54,11 +48,17 @@ jobs:
             echo "destructiveChanges=false" >> $GITHUB_ENV
           fi
 
+      - name: Debug XML output
+        run: |
+          echo "Checking for generated XML files..."
+          ls -la
+          cat package.xml || echo "No package.xml"
+          cat destructiveChanges.xml || echo "No destructiveChanges.xml"
+
       - name: Set Org Credentials Based on Branch
         run: |
           BRANCH="${GITHUB_REF##*/}"
           echo "Branch: $BRANCH"
-
           if [[ "$BRANCH" == "main" ]]; then
             echo "SF_USERNAME=${{ secrets.SF_USERNAME_MAIN }}" >> $GITHUB_ENV
             echo "SF_CONSUMER_KEY=${{ secrets.SF_CONSUMER_MAIN_KEY }}" >> $GITHUB_ENV
@@ -74,12 +74,12 @@ jobs:
           fi
 
       - name: Decode JWT key
-        if: ${{ steps.generate-xml.outcome == 'success' }}
+        if: ${{ env.packageChanges == 'true' || env.destructiveChanges == 'true' }}
         run: |
           echo "${{ secrets.SF_JWT_SECRET }}" > server.key
 
       - name: Authenticate with Salesforce (sf CLI)
-        if: ${{ steps.generate-xml.outcome == 'success' }}
+        if: ${{ env.packageChanges == 'true' || env.destructiveChanges == 'true' }}
         run: |
           sf org login jwt \
           --client-id $SF_CONSUMER_KEY \
@@ -89,39 +89,39 @@ jobs:
           --set-default
 
       - name: Deploy Metadata and/or Destructive Changes to Salesforce
-        if: ${{ steps.generate-xml.outcome == 'success' }}
+        if: ${{ env.packageChanges == 'true' || env.destructiveChanges == 'true' }}
         run: |
-         if [[ "${{ env.packageChanges }}" == "true" && "${{ env.destructiveChanges }}" == "true" ]]; then
+          if [[ "${{ env.packageChanges }}" == "true" && "${{ env.destructiveChanges }}" == "true" ]]; then
             echo "Deploying metadata and destructive changes..."
             sf deploy metadata \
-             --manifest package.xml \
-             --destructive-changes destructiveChanges.xml \
-             --target-org ci-org \
-             --test-level RunLocalTests \
-             --wait 30 \
-             --verbose \
-             --ignore-conflicts
-    
-         elif [[ "${{ env.packageChanges }}" == "true" && "${{ env.destructiveChanges }}" == "false" ]]; then
+              --manifest package.xml \
+              --destructive-changes destructiveChanges.xml \
+              --target-org ci-org \
+              --test-level RunLocalTests \
+              --wait 30 \
+              --verbose \
+              --ignore-conflicts
+
+          elif [[ "${{ env.packageChanges }}" == "true" && "${{ env.destructiveChanges }}" == "false" ]]; then
             echo "Deploying metadata only..."
             sf deploy metadata \
-             --manifest package.xml \
-             --target-org ci-org \
-             --test-level RunLocalTests \
-             --wait 30 \
-             --verbose \
-             --ignore-conflicts
-    
-         elif [[ "${{ env.packageChanges }}" == "false" && "${{ env.destructiveChanges }}" == "true" ]]; then
+              --manifest package.xml \
+              --target-org ci-org \
+              --test-level RunLocalTests \
+              --wait 30 \
+              --verbose \
+              --ignore-conflicts
+
+          elif [[ "${{ env.packageChanges }}" == "false" && "${{ env.destructiveChanges }}" == "true" ]]; then
             echo "Deploying destructive changes only..."
             sf deploy metadata \
-             --destructive-changes destructiveChanges.xml \
-             --target-org ci-org \
-             --test-level RunLocalTests \
-             --wait 30 \
-             --verbose \
-             --ignore-conflicts
-    
-         else
+              --destructive-changes destructiveChanges.xml \
+              --target-org ci-org \
+              --test-level RunLocalTests \
+              --wait 30 \
+              --verbose \
+              --ignore-conflicts
+
+          else
             echo "No changes to deploy."
-         fi
+          fi
