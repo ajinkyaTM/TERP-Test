@@ -94,7 +94,8 @@ jobs:
               --target-org ci-org \
               --test-level RunLocalTests \
               --wait 10 \
-              --verbose
+              --verbose \
+              --ignore-conflicts
           else
            echo "package.xml not found, skipping metadata validation."
           fi
@@ -106,7 +107,8 @@ jobs:
               --target-org ci-org \
               --test-level RunLocalTests \
               --wait 10 \
-              --verbose
+              --verbose \
+              --ignore-conflicts
           else
            echo "destructiveChanges.xml not found, skipping destructive validation."
           fi
