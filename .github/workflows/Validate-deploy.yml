@@ -84,30 +84,29 @@ jobs:
           --alias ci-org \
           --set-default
 
-    - name: Validate Deployment using package.xml
+    - name: Validate Deployment and Destructive Changes
       if: steps.check_xml.outputs.exists == 'true'
       run: |
-        if [ -f "package.xml" ]; then
-          sf project deploy validate \
-            --manifest package.xml \
-            --target-org ci-org \
-            --test-level RunLocalTests \
-            --wait 10 \
-            --verbose
-        else
-          echo "package.xml not found, skipping deployment."
-        fi
-
-    - name: Validate Destructive Changes using destructiveChanges.xml
-      if: steps.check_xml.outputs.exists == 'true'
-      run: |
-        if [ -f "destructiveChanges.xml" ]; then
-          sf project deploy validate \
-            --manifest destructiveChanges.xml \
-            --target-org ci-org \
-            --test-level RunLocalTests \
-            --wait 10 \
-            --verbose
-        else
-          echo "destructiveChanges.xml not found, skipping destructive validation."
-        fi
+          if [ -f "package.xml" ]; then
+           echo "Validating deployment using package.xml..."
+           sf project deploy validate \
+              --manifest package.xml \
+              --target-org ci-org \
+              --test-level RunLocalTests \
+              --wait 10 \
+              --verbose
+          else
+           echo "package.xml not found, skipping metadata validation."
+          fi
+      
+          if [ -f "destructiveChanges.xml" ]; then
+           echo "Validating destructive changes using destructiveChanges.xml..."
+           sf deploy metadata validate \
+              --destructive-changes destructiveChanges.xml \
+              --target-org ci-org \
+              --test-level RunLocalTests \
+              --wait 10 \
+              --verbose
+          else
+           echo "destructiveChanges.xml not found, skipping destructive validation."
+          fi
