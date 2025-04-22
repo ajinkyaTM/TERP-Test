@@ -5,5 +5,6 @@ export default class TestingLwc extends LightningElement {
         console.log('abcd');
         console.log('abcdef');
         console.log('abcdefgh');
+        console.log('abcdefgh');
     }
 }
