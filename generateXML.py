@@ -248,6 +248,8 @@ def get_diff_files(base_branch, head_ref):
     deleted = {}
 
     label_checked = False  # Only run label diff once
+    custom_metadata_types = set()  # Track Custom Metadata type names for CustomObject and wildcard
+    custom_metadata_records = set()  # Track Custom Metadata record names
 
     for line in result.stdout.splitlines():
         parts = line.split('\t')
@@ -276,7 +278,7 @@ def get_diff_files(base_branch, head_ref):
             if not metadata_type:
                 continue
 
-            # Handle Custom Labels (only once)
+            # Handle Custom Labels
             if folder_name == "labels" and not label_checked:
                 added_labels, deleted_labels = get_changed_labels(base_branch, head_ref)
                 if added_labels:
@@ -286,80 +288,49 @@ def get_diff_files(base_branch, head_ref):
                 label_checked = True
                 continue
 
-            # Handle nested metadata inside objects
+            # Handle Custom Metadata Type Definitions and Fields
             if folder_name == "objects" and len(parts) >= 5:
                 object_name = parts[4]
 
-                # If it's a Custom Metadata type
                 if object_name.endswith("__mdt"):
-                    # .object-meta.xml or any subcomponent like fields/validationRules
-                    if len(parts) >= 6 and parts[5] != f"{object_name}.object-meta.xml":
-                        # Subcomponent like fields, validationRules etc.
-                        if len(parts) >= 7:
-                            sub_file = parts[6]
-                            sub_name = sub_file.split('.')[0]
-                            metadata_name = f"{object_name}.{sub_name}"
-                        else:
-                            sub_name = parts[5].split('.')[0]
-                            metadata_name = f"{object_name}.{sub_name}"
-                    else:
-                        # It's the object-meta.xml file itself
-                        metadata_name = object_name
+                    # Add type name to CustomObject
+                    created_or_modified.setdefault("CustomObject", []).append(object_name)
 
-                    target_dict.setdefault("CustomMetadata", []).append(metadata_name)
+                    # Add wildcard for all records of the type
+                    custom_metadata_types.add(object_name)
 
-                else:
-                    # Regular object or its subcomponents
+                    # Handle subcomponents like fields
                     if len(parts) >= 6:
-                        sub_folder_or_file = parts[5]
-                        sub_metadata_type = FOLDER_TO_METADATA_TYPE.get(sub_folder_or_file)
+                        subfolder = parts[5]
 
-                        if sub_metadata_type and len(parts) >= 7:
-                            sub_file = parts[6]
-                            sub_name = sub_file.split('.')[0]
-                            metadata_name = f"{object_name}.{sub_name}"
-                            target_dict.setdefault(sub_metadata_type, []).append(metadata_name)
-                        else:
-                            file_name = parts[5]
-                            metadata_name = file_name.split('.')[0]
-                            target_dict.setdefault(metadata_type, []).append(metadata_name)
+                        if subfolder == "fields" and len(parts) >= 7:
+                            field_file = parts[6]
+                            field_name = field_file.split('.')[0]
+                            full_field = f"{object_name}.{field_name}"
+                            created_or_modified.setdefault("CustomField", []).append(full_field)
 
-            # Handle Custom Index 
-            elif folder_name == "customindex" and len(parts) >= 5:
-                index_file = parts[4]
-                name_parts = index_file.split('.')[0].split('-')
-                object_name, index_name = index_file.split('.')[0], index_file.split('.')[1]
-                metadata_name = f"{object_name}.{index_name}"
-                target_dict.setdefault("CustomIndex", []).append(metadata_name)
+                        # Handle validationRules, recordTypes, etc. similarly if needed
 
-            # Handle QuickAction metadata
-            elif folder_name == "quickActions" and len(parts) >= 5:
-                quick_action_file = parts[4]
-                # Extract object name and quick action name from the file name
-                if '.' in quick_action_file:
-                    object_name, quick_action_name = quick_action_file.split('.')[:2]
-                    metadata_name = f"{object_name}.{quick_action_name}"
-                    target_dict.setdefault("QuickAction", []).append(metadata_name)
+                continue  # Skip rest of logic for custom metadata type handling
 
-            else:
-                file_name = parts[4]
+            # Handle actual Custom Metadata Records
+            if folder_name == "customMetadata" and len(parts) >= 5:
+                record_file = parts[4]
+                record_name = record_file.replace(".md-meta.xml", "")
+                custom_metadata_records.add(record_name)
+                continue
 
-                if folder_name == "staticresources":
-                    # Handle .resource-meta.xml and .zip files
-                    if file_name.endswith(".resource-meta.xml"):
-                        metadata_name = file_name.replace(".resource-meta.xml", "")
-                    elif file_name.endswith(".zip"):
-                        metadata_name = file_name.replace(".zip", "")
-                    else:
-                        # If it's an asset file like .js/.png, infer the resource name from folder structure
-                        if len(parts) >= 6:
-                            metadata_name = parts[4]  # folder name is the resource
-                        else:
-                            metadata_name = file_name.split('.')[0]
-                else:
-                    metadata_name = file_name.split('.')[0]
+            # Everything else
+            file_name = parts[4]
+            metadata_name = file_name.split('.')[0]
+            target_dict.setdefault(metadata_type, []).append(metadata_name)
 
-                target_dict.setdefault(metadata_type, []).append(metadata_name)
+    # After processing all lines, add wildcard and record entries
+    for object_name in custom_metadata_types:
+        created_or_modified.setdefault("CustomMetadata", []).append(f"{object_name}.*")
+
+    for record in custom_metadata_records:
+        created_or_modified.setdefault("CustomMetadata", []).append(record)
 
     return created_or_modified, deleted
 
