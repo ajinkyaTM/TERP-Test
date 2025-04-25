@@ -287,38 +287,42 @@ def get_diff_files(base_branch, head_ref):
                 continue
 
             # Handle nested metadata inside objects
-            if folder_name == "objects" and len(parts) >= 6:
+            if folder_name == "objects" and len(parts) >= 5:
                 object_name = parts[4]
-                sub_folder_or_file = parts[5]
-                sub_metadata_type = FOLDER_TO_METADATA_TYPE.get(sub_folder_or_file)
 
-                # Check if it's a Custom Metadata Type object or subcomponent
+                # If it's a Custom Metadata type
                 if object_name.endswith("__mdt"):
-                    if sub_folder_or_file == "fields" and len(parts) >= 7:
-                        field_file = parts[6]
-                        field_name = field_file.split('.')[0]
-                        metadata_name = f"{object_name}.{field_name}"
-                        target_dict.setdefault("CustomField", []).append(metadata_name)
-                    elif sub_folder_or_file.endswith(".object-meta.xml"):
-                        # Handle the object file itself
+                    # .object-meta.xml or any subcomponent like fields/validationRules
+                    if len(parts) >= 6 and parts[5] != f"{object_name}.object-meta.xml":
+                        # Subcomponent like fields, validationRules etc.
+                        if len(parts) >= 7:
+                            sub_file = parts[6]
+                            sub_name = sub_file.split('.')[0]
+                            metadata_name = f"{object_name}.{sub_name}"
+                        else:
+                            sub_name = parts[5].split('.')[0]
+                            metadata_name = f"{object_name}.{sub_name}"
+                    else:
+                        # It's the object-meta.xml file itself
                         metadata_name = object_name
-                        target_dict.setdefault("CustomMetadata", []).append(metadata_name)
-                    else:
-                        # Any other subcomponent (like validationRules etc.)
-                        file_name = parts[5]
-                        metadata_name = file_name.split('.')[0]
-                        target_dict.setdefault("CustomMetadata", []).append(f"{object_name}.{metadata_name}")
+
+                    target_dict.setdefault("CustomMetadata", []).append(metadata_name)
+
                 else:
-                    # Default behavior for regular objects
-                    if sub_metadata_type and len(parts) >= 7:
-                        field_file = parts[6]
-                        field_name = field_file.split('.')[0]
-                        metadata_name = f"{object_name}.{field_name}"
-                        target_dict.setdefault(sub_metadata_type, []).append(metadata_name)
-                    else:
-                        file_name = parts[5]
-                        metadata_name = file_name.split('.')[0]
-                        target_dict.setdefault(metadata_type, []).append(metadata_name)
+                    # Regular object or its subcomponents
+                    if len(parts) >= 6:
+                        sub_folder_or_file = parts[5]
+                        sub_metadata_type = FOLDER_TO_METADATA_TYPE.get(sub_folder_or_file)
+
+                        if sub_metadata_type and len(parts) >= 7:
+                            sub_file = parts[6]
+                            sub_name = sub_file.split('.')[0]
+                            metadata_name = f"{object_name}.{sub_name}"
+                            target_dict.setdefault(sub_metadata_type, []).append(metadata_name)
+                        else:
+                            file_name = parts[5]
+                            metadata_name = file_name.split('.')[0]
+                            target_dict.setdefault(metadata_type, []).append(metadata_name)
 
             # Handle Custom Index 
             elif folder_name == "customindex" and len(parts) >= 5:
