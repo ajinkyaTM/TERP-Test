@@ -292,15 +292,33 @@ def get_diff_files(base_branch, head_ref):
                 sub_folder_or_file = parts[5]
                 sub_metadata_type = FOLDER_TO_METADATA_TYPE.get(sub_folder_or_file)
 
-                if sub_metadata_type and len(parts) >= 7:
-                    field_file = parts[6]
-                    field_name = field_file.split('.')[0]
-                    metadata_name = f"{object_name}.{field_name}"
-                    target_dict.setdefault(sub_metadata_type, []).append(metadata_name)
+                # Check if it's a Custom Metadata Type object or subcomponent
+                if object_name.endswith("__mdt"):
+                    if sub_folder_or_file == "fields" and len(parts) >= 7:
+                        field_file = parts[6]
+                        field_name = field_file.split('.')[0]
+                        metadata_name = f"{object_name}.{field_name}"
+                        target_dict.setdefault("CustomField", []).append(metadata_name)
+                    elif sub_folder_or_file.endswith(".object-meta.xml"):
+                        # Handle the object file itself
+                        metadata_name = object_name
+                        target_dict.setdefault("CustomMetadata", []).append(metadata_name)
+                    else:
+                        # Any other subcomponent (like validationRules etc.)
+                        file_name = parts[5]
+                        metadata_name = file_name.split('.')[0]
+                        target_dict.setdefault("CustomMetadata", []).append(f"{object_name}.{metadata_name}")
                 else:
-                    file_name = parts[5]
-                    metadata_name = file_name.split('.')[0]
-                    target_dict.setdefault(metadata_type, []).append(metadata_name)
+                    # Default behavior for regular objects
+                    if sub_metadata_type and len(parts) >= 7:
+                        field_file = parts[6]
+                        field_name = field_file.split('.')[0]
+                        metadata_name = f"{object_name}.{field_name}"
+                        target_dict.setdefault(sub_metadata_type, []).append(metadata_name)
+                    else:
+                        file_name = parts[5]
+                        metadata_name = file_name.split('.')[0]
+                        target_dict.setdefault(metadata_type, []).append(metadata_name)
 
             # Handle Custom Index 
             elif folder_name == "customindex" and len(parts) >= 5:
@@ -309,6 +327,15 @@ def get_diff_files(base_branch, head_ref):
                 object_name, index_name = index_file.split('.')[0], index_file.split('.')[1]
                 metadata_name = f"{object_name}.{index_name}"
                 target_dict.setdefault("CustomIndex", []).append(metadata_name)
+
+            # Handle QuickAction metadata
+            elif folder_name == "quickActions" and len(parts) >= 5:
+                quick_action_file = parts[4]
+                # Extract object name and quick action name from the file name
+                if '.' in quick_action_file:
+                    object_name, quick_action_name = quick_action_file.split('.')[:2]
+                    metadata_name = f"{object_name}.{quick_action_name}"
+                    target_dict.setdefault("QuickAction", []).append(metadata_name)
 
             else:
                 file_name = parts[4]
