@@ -217,6 +217,27 @@ def prettify_xml(elem):
     reparsed = minidom.parseString(rough_string)
     return reparsed.toprettyxml(indent="  ")
 
+def get_changed_labels(base_branch, head_ref):
+    diff_command = f"git diff {base_branch}..{head_ref} -- {SRC_FOLDER}/labels/CustomLabels.labels-meta.xml"
+    result = subprocess.run(diff_command, shell=True, capture_output=True, text=True)
+    print(f"Result of git diff command for lables:\n{result.stdout}")
+    added_labels = []
+    deleted_labels = []
+
+    for line in result.stdout.splitlines():
+        line = line.strip()
+        if "<fullName>" in line:
+            label_name = line.replace("<fullName>", "").replace("</fullName>", "").strip("+- ").strip()
+            if line.startswith("+"):
+                added_labels.append(label_name)
+            elif line.startswith("-"):
+                deleted_labels.append(label_name)
+
+    print(f"Added labels: {added_labels}")
+    print(f"Deleted labels: {deleted_labels}")
+
+    return added_labels, deleted_labels
+	
 def get_diff_files(base_branch, head_ref):
     diff_command = f"git diff --name-status {base_branch}..{head_ref}"
     print(f"Running command: {diff_command}")
