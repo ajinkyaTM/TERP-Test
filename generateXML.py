@@ -293,10 +293,10 @@ def get_diff_files(base_branch, head_ref):
             if folder_name == "objects" and len(parts) >= 5:
                 object_name = parts[4]
 
+                # Custom Metadata Type
                 if object_name.endswith("__mdt"):
                     custom_metadata_types.add(object_name)  # collect metadata type name
 
-                    # .object-meta.xml or subcomponents
                     if len(parts) >= 6 and parts[5] != f"{object_name}.object-meta.xml":
                         if len(parts) >= 7:
                             sub_file = parts[6]
@@ -311,6 +311,7 @@ def get_diff_files(base_branch, head_ref):
                     target_dict.setdefault("CustomMetadata", []).append(metadata_name)
 
                 else:
+                    # Handle regular object subcomponents
                     if len(parts) >= 6:
                         sub_folder_or_file = parts[5]
                         sub_metadata_type = FOLDER_TO_METADATA_TYPE.get(sub_folder_or_file)
@@ -323,6 +324,13 @@ def get_diff_files(base_branch, head_ref):
                         else:
                             file_name = parts[5]
                             metadata_name = file_name.split('.')[0]
+
+                            # ✅ Handle CompactLayout properly
+                            if metadata_type == "CompactLayout" and len(parts) >= 7:
+                                layout_file = parts[6]
+                                layout_name = layout_file.split('.')[0]
+                                metadata_name = f"{object_name}.{layout_name}"
+
                             target_dict.setdefault(metadata_type, []).append(metadata_name)
 
             # Handle actual Custom Metadata Records
