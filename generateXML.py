@@ -292,46 +292,21 @@ def get_diff_files(base_branch, head_ref):
             # Handle nested metadata inside objects
             if folder_name == "objects" and len(parts) >= 5:
                 object_name = parts[4]
-
+                sub_folder_or_file = parts[5]
+                sub_metadata_type = FOLDER_TO_METADATA_TYPE.get(sub_folder_or_file)
                 # Custom Metadata Type
                 if object_name.endswith("__mdt"):
                     custom_metadata_types.add(object_name)  # collect metadata type name
 
-                    if len(parts) >= 6 and parts[5] != f"{object_name}.object-meta.xml":
-                        if len(parts) >= 7:
-                            sub_file = parts[6]
-                            sub_name = sub_file.split('.')[0]
-                            metadata_name = f"{object_name}.{sub_name}"
-                        else:
-                            sub_name = parts[5].split('.')[0]
-                            metadata_name = f"{object_name}.{sub_name}"
-                    else:
-                        metadata_name = object_name
-
-                    target_dict.setdefault("CustomMetadata", []).append(metadata_name)
-
+                if sub_metadata_type and len(parts) >= 7:
+                    field_file = parts[6]
+                    field_name = field_file.split('.')[0]
+                    metadata_name = f"{object_name}.{field_name}"
+                    target_dict.setdefault(sub_metadata_type, []).append(metadata_name)
                 else:
-                    # Handle regular object subcomponents
-                    if len(parts) >= 6:
-                        sub_folder_or_file = parts[5]
-                        sub_metadata_type = FOLDER_TO_METADATA_TYPE.get(sub_folder_or_file)
-
-                        if sub_metadata_type and len(parts) >= 7:
-                            sub_file = parts[6]
-                            sub_name = sub_file.split('.')[0]
-                            metadata_name = f"{object_name}.{sub_name}"
-                            target_dict.setdefault(sub_metadata_type, []).append(metadata_name)
-                        else:
-                            file_name = parts[5]
-                            metadata_name = file_name.split('.')[0]
-
-                            # ✅ Handle CompactLayout properly
-                            if metadata_type == "CompactLayout" and len(parts) >= 7:
-                                layout_file = parts[6]
-                                layout_name = layout_file.split('.')[0]
-                                metadata_name = f"{object_name}.{layout_name}"
-
-                            target_dict.setdefault(metadata_type, []).append(metadata_name)
+                    file_name = parts[5]
+                    metadata_name = file_name.split('.')[0]
+                    target_dict.setdefault(metadata_type, []).append(metadata_name)
 
             # Handle actual Custom Metadata Records
             elif folder_name == "customMetadata" and len(parts) >= 5:
