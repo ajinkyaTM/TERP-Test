@@ -24,8 +24,8 @@ jobs:
 
       - name: Fetch base and head branches/commits
         run: |
-            git fetch origin ${{ github.event.before }}:${{ github.event.before }}
-            git fetch origin ${{ github.sha }}:${{ github.sha }}
+          git fetch origin ${{ github.event.before }}:${{ github.event.before }}
+          git fetch origin ${{ github.sha }}:${{ github.sha }}
 
       - name: Clean up old XML files
         run: |
@@ -34,74 +34,99 @@ jobs:
       - name: Run generateXML.py
         id: generate-xml
         run: |
+          set -e
           python generateXML.py --base_commit ${{ github.event.before }} --head_commit ${{ github.sha }}
-          
-          if [ ! -f "package.xml" ]; then
+          echo "Successfully run generateXML.py"
+
+          if [ -f "package.xml" ]; then
+            echo "packageChanges=true" >> $GITHUB_ENV
+          else
+            echo "packageChanges=false" >> $GITHUB_ENV
             echo "Package XML not found."
-            exit 1
           fi
-          
+
           if [ -f "destructiveChanges.xml" ]; then
             echo "destructiveChanges=true" >> $GITHUB_ENV
           else
             echo "destructiveChanges=false" >> $GITHUB_ENV
           fi
 
+      - name: Debug XML output
+        run: |
+          echo "Checking for generated XML files..."
+          ls -la
+          cat package.xml || echo "No package.xml"
+          cat destructiveChanges.xml || echo "No destructiveChanges.xml"
+
       - name: Set Org Credentials Based on Branch
         run: |
           BRANCH="${GITHUB_REF##*/}"
           echo "Branch: $BRANCH"
-
           if [[ "$BRANCH" == "main" ]]; then
             echo "SF_USERNAME=${{ secrets.SF_USERNAME_MAIN }}" >> $GITHUB_ENV
             echo "SF_CONSUMER_KEY=${{ secrets.SF_CONSUMER_MAIN_KEY }}" >> $GITHUB_ENV
-            echo "SF_INSTANCE_URL=${{ secrets.SF_INSTANCE_UAT_URL }}" >> $GITHUB_ENV
           elif [[ "$BRANCH" == "UAT" ]]; then
             echo "SF_USERNAME=${{ secrets.SF_USERNAME_UAT }}" >> $GITHUB_ENV
             echo "SF_CONSUMER_KEY=${{ secrets.SF_CONSUMERUAT_KEY }}" >> $GITHUB_ENV
-            echo "SF_INSTANCE_URL=${{ secrets.SF_INSTANCE_UAT_URL }}" >> $GITHUB_ENV
           elif [[ "$BRANCH" == "QA" ]]; then
             echo "SF_USERNAME=${{ secrets.SF_USERNAME_QA }}" >> $GITHUB_ENV
             echo "SF_CONSUMER_KEY=${{ secrets.SF_CONSUMER_QA_KEY }}" >> $GITHUB_ENV
-            echo "SF_INSTANCE_URL=${{ secrets.SF_INSTANCE_UAT_URL }}" >> $GITHUB_ENV
           else
             echo "Unsupported branch: $BRANCH"
             exit 1
           fi
 
       - name: Decode JWT key
-        if: ${{ steps.generate-xml.outcome == 'success' }}
+        if: ${{ env.packageChanges == 'true' || env.destructiveChanges == 'true' }}
         run: |
           echo "${{ secrets.SF_JWT_SECRET }}" > server.key
 
       - name: Authenticate with Salesforce (sf CLI)
-        if: ${{ steps.generate-xml.outcome == 'success' }}
+        if: ${{ env.packageChanges == 'true' || env.destructiveChanges == 'true' }}
         run: |
           sf org login jwt \
-          --client-id $SF_CONSUMER_KEY \
-          --jwt-key-file server.key \
-          --username $SF_USERNAME \
-          --instance-url $SF_INSTANCE_URL \
-          --alias ci-org \
-          --set-default
+            --client-id $SF_CONSUMER_KEY \
+            --jwt-key-file server.key \
+            --username $SF_USERNAME \
+            --alias ci-org \
+            --set-default
 
-      - name: Deploy Metadata to Salesforce
-        if: ${{ steps.generate-xml.outcome == 'success' }}
+      - name: Deploy Metadata and/or Destructive Changes to Salesforce
+        if: ${{ env.packageChanges == 'true' || env.destructiveChanges == 'true' }}
         run: |
-          sf deploy metadata \
-            --manifest package.xml \
-            --target-org ci-org \
-            --test-level RunLocalTests \
-            --wait 30 \
-            --verbose
+          echo " Starting deployment..."
+      
+          if [[ "${{ env.packageChanges }}" == "true" && "${{ env.destructiveChanges }}" == "true" ]]; then
+            echo " Deploying metadata and destructive changes (pre)..."
+            sf project deploy start \
+              --manifest package.xml \
+              --pre-destructive-changes destructiveChanges.xml \
+              --target-org ci-org \
+              --test-level RunLocalTests \
+              --wait 30 \
+              --verbose
+      
+          elif [[ "${{ env.packageChanges }}" == "true" ]]; then
+            echo " Deploying metadata only..."
+            sf project deploy start \
+              --manifest package.xml \
+              --target-org ci-org \
+              --test-level RunLocalTests \
+              --wait 30 \
+              --verbose
+      
+          elif [[ "${{ env.packageChanges }}" == "false" && "${{ env.destructiveChanges }}" == "true" ]]; then
+            echo " Deleting destructive changes..."
+            echo '<?xml version="1.0" encoding="UTF-8"?>
+                    <Package xmlns="http://soap.sforce.com/2006/04/metadata">
+                      <version>58.0</version>
+                    </Package>' > package.xml
 
-      - name: Deploy Destructive Changes (if present)
-        if: ${{ env.destructiveChanges == 'true' && steps.generate-xml.outcome == 'success' }}
-        run: |
-          sf deploy metadata \
-            --manifest package.xml \
-            --destructive-changes destructiveChanges.xml \
-            --target-org ci-org \
-            --test-level RunLocalTests \
-            --wait 30 \
-            --verbose
+            sf project deploy start \
+              --manifest package.xml \
+              --pre-destructive-changes destructiveChanges.xml \
+              --target-org ci-org \
+              --test-level RunLocalTests \
+              --wait 30 \
+              --verbose
+          fi

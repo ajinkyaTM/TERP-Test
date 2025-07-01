@@ -237,7 +237,7 @@ def get_changed_labels(base_branch, head_ref):
     print(f"Deleted labels: {deleted_labels}")
 
     return added_labels, deleted_labels
-
+	
 def get_diff_files(base_branch, head_ref):
     diff_command = f"git diff --name-status {base_branch}..{head_ref}"
     print(f"Running command: {diff_command}")
@@ -248,12 +248,13 @@ def get_diff_files(base_branch, head_ref):
     deleted = {}
 
     label_checked = False  # Only run label diff once
+    custom_metadata_types = set()
+    custom_metadata_records = set()
 
     for line in result.stdout.splitlines():
         parts = line.split('\t')
         status = parts[0]
 
-        # Handle renamed files
         if status.startswith('R') and len(parts) == 3:
             _, old_path, new_path = parts
             paths = [(old_path, deleted), (new_path, created_or_modified)]
@@ -276,7 +277,6 @@ def get_diff_files(base_branch, head_ref):
             if not metadata_type:
                 continue
 
-            # Handle Custom Labels (only once)
             if folder_name == "labels" and not label_checked:
                 added_labels, deleted_labels = get_changed_labels(base_branch, head_ref)
                 if added_labels:
@@ -286,49 +286,76 @@ def get_diff_files(base_branch, head_ref):
                 label_checked = True
                 continue
 
-            # Handle nested metadata inside objects
-            if folder_name == "objects" and len(parts) >= 6:
+            if folder_name == "objects" and len(parts) >= 5:
                 object_name = parts[4]
-                sub_folder_or_file = parts[5]
-                sub_metadata_type = FOLDER_TO_METADATA_TYPE.get(sub_folder_or_file)
+                if object_name.endswith("__mdt"):
+                    created_or_modified.setdefault("CustomObject", []).append(object_name)
+                    custom_metadata_types.add(object_name)
 
-                if sub_metadata_type and len(parts) >= 7:
-                    field_file = parts[6]
-                    field_name = field_file.split('.')[0]
-                    metadata_name = f"{object_name}.{field_name}"
-                    target_dict.setdefault(sub_metadata_type, []).append(metadata_name)
-                else:
-                    file_name = parts[5]
-                    metadata_name = file_name.split('.')[0]
-                    target_dict.setdefault(metadata_type, []).append(metadata_name)
+                    if len(parts) >= 6:
+                        subfolder = parts[5]
+                        if subfolder == "fields" and len(parts) >= 7:
+                            field_file = parts[6]
+                            field_name = field_file.split('.')[0]
+                            full_field = f"{object_name}.{field_name}"
+                            created_or_modified.setdefault("CustomField", []).append(full_field)
+                    continue
 
-            # Handle Custom Index 
-            elif folder_name == "customindex" and len(parts) >= 5:
-                index_file = parts[4]
-                name_parts = index_file.split('.')[0].split('-')
-                object_name, index_name = index_file.split('.')[0], index_file.split('.')[1]
-                metadata_name = f"{object_name}.{index_name}"
-                target_dict.setdefault("CustomIndex", []).append(metadata_name)
+                if len(parts) >= 6:
+                    sub_folder_or_file = parts[5]
+                    sub_metadata_type = FOLDER_TO_METADATA_TYPE.get(sub_folder_or_file)
 
-            else:
-                file_name = parts[4]
-
-                if folder_name == "staticresources":
-                    # Handle .resource-meta.xml and .zip files
-                    if file_name.endswith(".resource-meta.xml"):
-                        metadata_name = file_name.replace(".resource-meta.xml", "")
-                    elif file_name.endswith(".zip"):
-                        metadata_name = file_name.replace(".zip", "")
+                    if sub_metadata_type and len(parts) >= 7:
+                        sub_file = parts[6]
+                        sub_name = sub_file.split('.')[0]
+                        metadata_name = f"{object_name}.{sub_name}"
+                        target_dict.setdefault(sub_metadata_type, []).append(metadata_name)
                     else:
-                        # If it's an asset file like .js/.png, infer the resource name from folder structure
-                        if len(parts) >= 6:
-                            metadata_name = parts[4]  # folder name is the resource
-                        else:
-                            metadata_name = file_name.split('.')[0]
-                else:
-                    metadata_name = file_name.split('.')[0]
+                        file_name = parts[5]
+                        metadata_name = file_name.split('.')[0]
+                        target_dict.setdefault(metadata_type, []).append(metadata_name)
+                continue
 
-                target_dict.setdefault(metadata_type, []).append(metadata_name)
+            if folder_name == "customMetadata" and len(parts) >= 5:
+                record_file = parts[4]
+                record_name = record_file.replace(".md-meta.xml", "")
+                custom_metadata_records.add(record_name)
+                continue
+
+            if folder_name == "customindex" and len(parts) >= 5:
+                index_file = parts[4].replace(".index-meta.xml", "")
+                if '-' in index_file:
+                    object_name, index_name = index_file.split('-', 1)
+                    metadata_name = f"{object_name}.{index_name}"
+                    target_dict.setdefault("CustomIndex", []).append(metadata_name)
+                continue
+
+            if folder_name == "quickActions" and len(parts) >= 5:
+                quick_action_file = parts[4]
+                if '.' in quick_action_file:
+                    object_name, quick_action_name = quick_action_file.split('.')[:2]
+                    metadata_name = f"{object_name}.{quick_action_name}"
+                    target_dict.setdefault("QuickAction", []).append(metadata_name)
+                continue
+
+            file_name = parts[4]
+            if folder_name == "staticresources":
+                if file_name.endswith(".resource-meta.xml"):
+                    metadata_name = file_name.replace(".resource-meta.xml", "")
+                elif file_name.endswith(".zip"):
+                    metadata_name = file_name.replace(".zip", "")
+                else:
+                    metadata_name = parts[4] if len(parts) >= 6 else file_name.split('.')[0]
+            else:
+                metadata_name = file_name.split('.')[0]
+
+            target_dict.setdefault(metadata_type, []).append(metadata_name)
+
+    for object_name in custom_metadata_types:
+        created_or_modified.setdefault("CustomMetadata", []).append(f"{object_name}.*")
+
+    for record in custom_metadata_records:
+        created_or_modified.setdefault("CustomMetadata", []).append(record)
 
     return created_or_modified, deleted
 
