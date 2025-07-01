@@ -913,7 +913,7 @@ Take a look at our document and let me know if you have any questions:
         <fullName>testing</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>testing</shortDescription>
-        <value>testing text for deployment purpose</value>
+        <shortDescription>testing abc</shortDescription>
+        <value>testing text for deployment purpose abc</value>
     </labels>
 </CustomLabels>
