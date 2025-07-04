@@ -1,0 +1,926 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>Archive_Proposal_ModalWarning</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Archive Document ModalWarning</shortDescription>
+        <value>Are you sure you want to archive this document?</value>
+    </labels>
+    <labels>
+        <fullName>AuthenticationFailed</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Authenetication failure message</shortDescription>
+        <value>Sorry, something went wrong. Please check your Client credentials</value>
+    </labels>
+    <labels>
+        <fullName>Change_Status_ModalTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Change Status ModalTitle</shortDescription>
+        <value>Change Status</value>
+    </labels>
+    <labels>
+        <fullName>Change_Status_ModalWarning</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Change Status ModalWarning</shortDescription>
+        <value>Are you sure you want to mark this document as</value>
+    </labels>
+    <labels>
+        <fullName>ContactWithoutEmailAddressAssociated</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Contact missing email before create document</shortDescription>
+        <value>The main client contact you selected doesn’t have an email address associated with it. Please select a contact with an email address.</value>
+    </labels>
+    <labels>
+        <fullName>ContactWithoutFirstNameFilled</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Contact missing first name before create document</shortDescription>
+        <value>The main client contact you selected doesn’t have a first name. Please select a contact with a first name.</value>
+    </labels>
+    <labels>
+        <fullName>Error_Creating_Attachment</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Error Creating Attachment</shortDescription>
+        <value>Error creating attachment.</value>
+    </labels>
+    <labels>
+        <fullName>Error_Setup_Incomplete</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Error Setup Incomplete</shortDescription>
+        <value>Sorry, the Admin needs to finish the setup wizard.</value>
+    </labels>
+    <labels>
+        <fullName>Generic_Back</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Generic Back</shortDescription>
+        <value>Back</value>
+    </labels>
+    <labels>
+        <fullName>Generic_Close</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Generic Close</shortDescription>
+        <value>Close</value>
+    </labels>
+    <labels>
+        <fullName>Generic_Create</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Create</shortDescription>
+        <value>Create</value>
+    </labels>
+    <labels>
+        <fullName>Generic_Error</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Generic Error</shortDescription>
+        <value>Error</value>
+    </labels>
+    <labels>
+        <fullName>Generic_Error_Message</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Generic Error Message</shortDescription>
+        <value>Sorry, something went wrong. Please try again later.</value>
+    </labels>
+    <labels>
+        <fullName>Generic_Exit</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Generic Exit</shortDescription>
+        <value>Exit</value>
+    </labels>
+    <labels>
+        <fullName>Generic_Finish</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Generic Finish</shortDescription>
+        <value>Finish</value>
+    </labels>
+    <labels>
+        <fullName>Generic_Next</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Generic Next</shortDescription>
+        <value>Next</value>
+    </labels>
+    <labels>
+        <fullName>Generic_No</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Generic No</shortDescription>
+        <value>No</value>
+    </labels>
+    <labels>
+        <fullName>Generic_Save</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Generic Save</shortDescription>
+        <value>Save</value>
+    </labels>
+    <labels>
+        <fullName>Generic_Success</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Generic Success</shortDescription>
+        <value>Success</value>
+    </labels>
+    <labels>
+        <fullName>Generic_Yes</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Generic Yes</shortDescription>
+        <value>Yes</value>
+    </labels>
+    <labels>
+        <fullName>Generic_required_field</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Generic Required Field</shortDescription>
+        <value>This field is required</value>
+    </labels>
+    <labels>
+        <fullName>Generic_search</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Generic Search</shortDescription>
+        <value>Search Document...</value>
+    </labels>
+    <labels>
+        <fullName>Invalid_Opportunity_Message</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Invalid Opportunity Message</shortDescription>
+        <value>The Opportunity must have a related Account with at least one Contact.</value>
+    </labels>
+    <labels>
+        <fullName>NoUsersAvailableToReceiveApprovalRequest</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>No users available to receive the approval request</shortDescription>
+        <value>No users available to receive the approval request for this proposal</value>
+    </labels>
+    <labels>
+        <fullName>OAuth_NotAuthorized</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>OAuth NotAuthorized</shortDescription>
+        <value>Not Authorized</value>
+    </labels>
+    <labels>
+        <fullName>OAuth_SuccessfullyAuthorized</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>OAuth SuccessfullyAuthorized</shortDescription>
+        <value>Successfully Authorized</value>
+    </labels>
+    <labels>
+        <fullName>Oauth_Authorize</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Oauth Authorize</shortDescription>
+        <value>Authorize</value>
+    </labels>
+    <labels>
+        <fullName>Oauth_Reauthorize</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Oauth Reauthorize</shortDescription>
+        <value>Reauthorize</value>
+    </labels>
+    <labels>
+        <fullName>OpportunityMissingRequiredDataBeforeCreateProposal</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Opportunity missing required data before create document</shortDescription>
+        <value>This Opportunity must have a related Account with at least one Contact assigned before you create a document</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Archived</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Archived</shortDescription>
+        <value>Document successfully archived.</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Linked</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Document Linked</shortDescription>
+        <value>Document successfully linked.</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_Archive_Record_Button</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager Archive Record Button</shortDescription>
+        <value>Archive Document</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_Attach_PDF_To_Account_Button</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager Attach PDF To Account Button</shortDescription>
+        <value>Attach PDF to Account</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_Copy_Private_Url</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager Copy Private Url</shortDescription>
+        <value>Copy this private URL to Share</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_Copy_URL_To_Share</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Copy this URL to Share</shortDescription>
+        <value>Copy this URL to Share</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_Create_Proposal_Button</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager Create Document Button</shortDescription>
+        <value>Create Document</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_Download_Record_Button</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager Download Record Button</shortDescription>
+        <value>Download PDF</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_Edit_Button</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Proposal Manager Edit Button</shortDescription>
+        <value>Edit</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_Edit_Proposal_Button</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Proposal Manager Edit Document Button</shortDescription>
+        <value>Edit Document</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_Get_Shareable_Link</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager Get Shareable Link</shortDescription>
+        <value>Get a Shareable Link for this Document</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_Link_Opportunity_To_Proposal_body</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager Link Opportunity to Document Title</shortDescription>
+        <value>Documents available to be linked:</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_Link_Opportunity_To_Proposal_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager Link Opportunity to Document Title</shortDescription>
+        <value>Link Opportunity to Document</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_Link_To_Another_Proposal</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager Link to Another Document</shortDescription>
+        <value>Link to Another Document</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_Link_To_Proposal</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager Link to Document</shortDescription>
+        <value>Link to Document</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_Loading</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager Loading</shortDescription>
+        <value>Loading</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_Login_Button</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager Login Button</shortDescription>
+        <value>Login With Proposify</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_Login_Text</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager Login Text</shortDescription>
+        <value>Please log in to Proposify in order to send and view documents. If you do not have an account, please create one before proceeding.</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_Logout_Record_Button</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager Logout Record Button</shortDescription>
+        <value>Log Out</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_More_Actions_Button</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager More Actions Button</shortDescription>
+        <value>More Actions</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_Open_Record_Button</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager Open Record Button</shortDescription>
+        <value>Open in Proposify</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_Preview_Proposal_Button</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager Preview Document Button</shortDescription>
+        <value>Preview Document</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_Send_Button</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager Send Button</shortDescription>
+        <value>Send</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_Send_Proposal_Button</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager Send Document Button</shortDescription>
+        <value>Send Document</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_Set_Proposal_Sent</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager Set Document Sent</shortDescription>
+        <value>Set Document as Sent</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_Shareable_Link</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager Shareable Link</shortDescription>
+        <value>Shareable Link</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_This_Link1</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager This Link1</shortDescription>
+        <value>This link will enable</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_This_Link2</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager This Link2</shortDescription>
+        <value>to sign off on the Document.</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_Unarchive_Record_Button</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager Unarchive Record Button</shortDescription>
+        <value>Unarchive Document</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_Unlink_Record_Button</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager Unlink Record Button</shortDescription>
+        <value>Unlink Document</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_Warning_Click_On_Shareable_Link</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager Warning Click On Shareable Link</shortDescription>
+        <value>Please click on a shareable link button from contacts.</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Manager_attach_Record_Button</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposal Manager Attach Record Button</shortDescription>
+        <value>Attach PDF</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Needs_To_Sign</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Document Needs To Sign</shortDescription>
+        <value>Needs To Sign</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Needs_To_Sign_Unassigned</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Document Needs To Sign Unassigned</shortDescription>
+        <value>Needs To Sign - Unassigned</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Share_This_Link</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Document Share this Link</shortDescription>
+        <value>Share this Link</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Status_Changed</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Document Status Changed</shortDescription>
+        <value>Status successfully changed to</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Unarchived</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Document Unarchived</shortDescription>
+        <value>Document successfully unarchived.</value>
+    </labels>
+    <labels>
+        <fullName>Proposal_Unlinked</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Document Unlinked</shortDescription>
+        <value>Document successfully unlinked</value>
+    </labels>
+    <labels>
+        <fullName>Proposify_Modal_Attach_File_Name</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposify Modal Attach File Name</shortDescription>
+        <value>Filename:</value>
+    </labels>
+    <labels>
+        <fullName>Proposify_Modal_Attach_File_body</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposify Modal Attach File Body</shortDescription>
+        <value>The Document PDF will be saved as an attachment to this Opportunity</value>
+    </labels>
+    <labels>
+        <fullName>Proposify_Modal_Attach_File_body_To_Account</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposify Modal Attach File Body</shortDescription>
+        <value>The Document PDF will be saved as an attachment to the Account</value>
+    </labels>
+    <labels>
+        <fullName>Proposify_Modal_Attach_File_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Proposify Modal Attach File Title</shortDescription>
+        <value>Attach File</value>
+    </labels>
+    <labels>
+        <fullName>RefreshTokenExpired</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Refresh token expiration message</shortDescription>
+        <value>Your login access has timed out.</value>
+    </labels>
+    <labels>
+        <fullName>Section_ModalTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Section ModalTitle</shortDescription>
+        <value>Are you sure you want to exit?</value>
+    </labels>
+    <labels>
+        <fullName>Section_ModalWarning</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Section ModalWarning</shortDescription>
+        <value>Unsaved changes will be lost if you leave the Setup Assistant.</value>
+    </labels>
+    <labels>
+        <fullName>Section_Progress</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Section Progress</shortDescription>
+        <value>Progress: {0}%</value>
+    </labels>
+    <labels>
+        <fullName>Setup_Assistant_Error_Client</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Setup Assistant Error Client</shortDescription>
+        <value>Please check your Client Id and Client Secret</value>
+    </labels>
+    <labels>
+        <fullName>Setup_Assistant_Error_ClientURI</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Setup Assistant Error ClientURI</shortDescription>
+        <value>Client URI does not match on Proposify account</value>
+    </labels>
+    <labels>
+        <fullName>Success_Creating_Attachment</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Success Creating Attachment</shortDescription>
+        <value>Attachment successfully created.</value>
+    </labels>
+    <labels>
+        <fullName>Unarchive_Proposal_ModalWarning</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Unarchive Document ModalWarning</shortDescription>
+        <value>Are you sure you want to unarchive this document?</value>
+    </labels>
+    <labels>
+        <fullName>Unlink_Proposal_ModalWarning</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Unlink Document ModalWarning</shortDescription>
+        <value>Are you sure you want to unlink this document?</value>
+    </labels>
+    <labels>
+        <fullName>UserNotAuthenticatedAtProposify</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Refresh token expiration message</shortDescription>
+        <value>User not authenticated at Proposify.</value>
+    </labels>
+    <labels>
+        <fullName>Widget_Logged_Out</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Widget Logged Out</shortDescription>
+        <value>Logged out from Proposify.</value>
+    </labels>
+    <labels>
+        <fullName>apiInteraction_proposal_already_exists</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>apiInteraction document already exists</shortDescription>
+        <value>Document Already Exists For This Opportunity</value>
+    </labels>
+    <labels>
+        <fullName>emailBody</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>emailBody</shortDescription>
+        <value>&lt;p style=&quot;font-size: .8125rem;font: inherit;vertical-align: baseline;margin-top: 1rem;margin-bottom: 1rem;&quot;&gt;
+Hello [!recipientFirstName] [!recipientLastName],
+&lt;/p&gt;
+
+&lt;p style=&quot;font-size: .8125rem;font: inherit;vertical-align: baseline;margin-top: 1rem;margin-bottom: 1rem;&quot;&gt;
+Take a look at our document and let me know if you have any questions:
+&lt;/p&gt;</value>
+    </labels>
+    <labels>
+        <fullName>generic_modalWarning</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>generic_modalWarning</shortDescription>
+        <value>Any unsaved changes will be lost.</value>
+    </labels>
+    <labels>
+        <fullName>proposalCreate_create_proposal</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalCreate create document</shortDescription>
+        <value>Create Document</value>
+    </labels>
+    <labels>
+        <fullName>proposalCreate_preview_and_edit</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalCreate preview and edit</shortDescription>
+        <value>Preview &amp; Edit</value>
+    </labels>
+    <labels>
+        <fullName>proposalCreate_progress</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalCreate progress</shortDescription>
+        <value>Progress: {0}%</value>
+    </labels>
+    <labels>
+        <fullName>proposalCreate_proposal_settings</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalCreate document settings</shortDescription>
+        <value>Document Settings</value>
+    </labels>
+    <labels>
+        <fullName>proposalCreate_select_template</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalCreate select template</shortDescription>
+        <value>Select Template</value>
+    </labels>
+    <labels>
+        <fullName>proposalDetails_client</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalDetails client</shortDescription>
+        <value>Which client is this document for?</value>
+    </labels>
+    <labels>
+        <fullName>proposalDetails_client_placeholder</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalDetails client placeholder</shortDescription>
+        <value>Select an option</value>
+    </labels>
+    <labels>
+        <fullName>proposalDetails_leader</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalDetails leader</shortDescription>
+        <value>Who is leading the document?</value>
+    </labels>
+    <labels>
+        <fullName>proposalDetails_main_contact</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalDetails main contact</shortDescription>
+        <value>Who is the main client contact?</value>
+    </labels>
+    <labels>
+        <fullName>proposalDetails_proposal_due_date</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalDetails document due date</shortDescription>
+        <value>Document Due Date</value>
+    </labels>
+    <labels>
+        <fullName>proposalDetails_proposal_name</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalDetails document name</shortDescription>
+        <value>Document Name</value>
+    </labels>
+    <labels>
+        <fullName>proposalDetails_proposal_name_placeholder</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalDetails document name placeholder</shortDescription>
+        <value>New Document</value>
+    </labels>
+    <labels>
+        <fullName>proposalDetails_proposal_settings</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalDetails document settings</shortDescription>
+        <value>Document Settings</value>
+    </labels>
+    <labels>
+        <fullName>proposalManager_account</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalManager account</shortDescription>
+        <value>Account</value>
+    </labels>
+    <labels>
+        <fullName>proposalManager_amount</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalManager amount</shortDescription>
+        <value>Amount</value>
+    </labels>
+    <labels>
+        <fullName>proposalManager_cancel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>cancel</shortDescription>
+        <value>Cancel</value>
+    </labels>
+    <labels>
+        <fullName>proposalManager_clientId</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>clientId</shortDescription>
+        <value>Client Id</value>
+    </labels>
+    <labels>
+        <fullName>proposalManager_clientSecret</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>clientSecret</shortDescription>
+        <value>Client Secret</value>
+    </labels>
+    <labels>
+        <fullName>proposalManager_contact</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalManager contact</shortDescription>
+        <value>Contact</value>
+    </labels>
+    <labels>
+        <fullName>proposalManager_contact_email</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalManager contact email</shortDescription>
+        <value>Contact Email</value>
+    </labels>
+    <labels>
+        <fullName>proposalManager_date_created</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalManager date created</shortDescription>
+        <value>Date Created</value>
+    </labels>
+    <labels>
+        <fullName>proposalManager_date_sent</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalManager date sent</shortDescription>
+        <value>Date Sent</value>
+    </labels>
+    <labels>
+        <fullName>proposalManager_due_date</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalManager due date</shortDescription>
+        <value>Due Date</value>
+    </labels>
+    <labels>
+        <fullName>proposalManager_editCreds</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>edit credentials</shortDescription>
+        <value>Edit Credentials</value>
+    </labels>
+    <labels>
+        <fullName>proposalManager_last_viewed_date</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalManager last viewed date</shortDescription>
+        <value>Last Viewed</value>
+    </labels>
+    <labels>
+        <fullName>proposalManager_linkUser</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>link user</shortDescription>
+        <value>In order to link an existing Proposify account, the Client Id and Secret must first be provided. Once saved, you can log in using your Proposify account information.</value>
+    </labels>
+    <labels>
+        <fullName>proposalManager_no_proposal</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalManager no document</shortDescription>
+        <value>No Document Created</value>
+    </labels>
+    <labels>
+        <fullName>proposalManager_owner</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalManager owner</shortDescription>
+        <value>Owner</value>
+    </labels>
+    <labels>
+        <fullName>proposalManager_recipiet</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalManager recipiet</shortDescription>
+        <value>Recipient</value>
+    </labels>
+    <labels>
+        <fullName>proposalManager_saveCreds</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>saveCreds</shortDescription>
+        <value>Save Credentials</value>
+    </labels>
+    <labels>
+        <fullName>proposalSend_ccd_emails</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalSend ccd emails</shortDescription>
+        <value>CC other email addresses (separated by comma)</value>
+    </labels>
+    <labels>
+        <fullName>proposalSend_email_body</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalSend email body</shortDescription>
+        <value>Email Body</value>
+    </labels>
+    <labels>
+        <fullName>proposalSend_from</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalSend from</shortDescription>
+        <value>From</value>
+    </labels>
+    <labels>
+        <fullName>proposalSend_from_placeholder</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalSend from placeholder</shortDescription>
+        <value>Select a User</value>
+    </labels>
+    <labels>
+        <fullName>proposalSend_send</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalSend send</shortDescription>
+        <value>Send</value>
+    </labels>
+    <labels>
+        <fullName>proposalSend_send_proposal</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalSend send document</shortDescription>
+        <value>Send Document</value>
+    </labels>
+    <labels>
+        <fullName>proposalSend_subject</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalSend subject</shortDescription>
+        <value>Subject</value>
+    </labels>
+    <labels>
+        <fullName>proposalTemplateSelect_no_gallery_templates</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalTemplateSelect no gallery templates</shortDescription>
+        <value>No Gallery Templates to Show</value>
+    </labels>
+    <labels>
+        <fullName>proposalTemplateSelect_no_saved_templates</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalTemplateSelect no saved templates</shortDescription>
+        <value>No Saved Templates to Show</value>
+    </labels>
+    <labels>
+        <fullName>proposalTemplateSelect_no_thumbnail</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalTemplateSelect no thumbnail</shortDescription>
+        <value>No Thumbnail Available</value>
+    </labels>
+    <labels>
+        <fullName>proposalTemplateSelect_select_template</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>proposalTemplateSelect select template</shortDescription>
+        <value>Select Template</value>
+    </labels>
+    <labels>
+        <fullName>salesforceToThirdParty_createAccount</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>salesforceToThirdParty createAccount</shortDescription>
+        <value>A Proposify account is required to connect to Salesforce. If you do not have a Proposify account, please create one</value>
+    </labels>
+    <labels>
+        <fullName>salesforceToThirdParty_createAccount2</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>salesforceToThirdParty createAccount2</shortDescription>
+        <value>This AppExchange app requires an active Proposify subscription and our Salesforce Advanced Integration. Contact our Sales department at sales@proposify.com to get started!</value>
+    </labels>
+    <labels>
+        <fullName>salesforceToThirdParty_here</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>salesforceToThirdParty here</shortDescription>
+        <value>here</value>
+    </labels>
+    <labels>
+        <fullName>testing</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>testing abc</shortDescription>
+        <value>testing text for deployment purpose abc</value>
+    </labels>
+    <labels>
+        <fullName>translation</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>translation</shortDescription>
+        <value>deployment testing for translation</value>
+    </labels>
+</CustomLabels>
