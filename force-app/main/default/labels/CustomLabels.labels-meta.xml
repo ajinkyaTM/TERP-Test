@@ -916,4 +916,11 @@ Take a look at our document and let me know if you have any questions:
         <shortDescription>testing abc</shortDescription>
         <value>testing text for deployment purpose abc</value>
     </labels>
+    <labels>
+        <fullName>translation</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>translation</shortDescription>
+        <value>deployment testing for translation</value>
+    </labels>
 </CustomLabels>
